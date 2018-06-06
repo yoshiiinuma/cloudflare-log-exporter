@@ -7,7 +7,7 @@ function usage() {
   console.log(" Usage: node dist/index.js [OPTIONS]");
   console.log("\n   OPTIONS");
   console.log("     -e or --env:        development|production default development");
-  console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default 10 minutes before");
+  console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default 10 minutes before now");
   console.log("     -r or --duration:   [1-60]{s|sec|secs|m|min|mins} default 1m");
   console.log("     -c or --count:      max number of log data to retrieve");
   console.log("     -h or --help:       show this message");
@@ -92,36 +92,12 @@ const showOpt = (opt) => {
   console.log(' Count:       ' + opt.count);
 }
 
-//const urlPrefix = 'https://api.cloudflare.com/client/v4';
-//
-//const generateLogApiUrl = (arg) => {
-//  let stime = utils.toISOStringWithoutMS(arg.startTime);
-//  let etime = utils.toISOStringWithoutMS(arg.startTime.getTime() + arg.duration);
-//  let url = urlPrefix + '/zones/' + arg.zone_id + '/logs/received?start=' + stime + '&end=' + etime;
-//  if (arg.count) url = url + '&count=' + arg.count;
-//  return url;
-//}
-//
-//
-//var url = generateLogApiUrl(Object.assign(conf, opt));
-//
-//console.log(url);
-//
-//rp({
-//  uri: url,
-//  json: true,
-//  headers: {
-//    'X-Auth-Key': conf.auth_key,
-//    'X-Auth-Email': conf.auth_email
-//  }
-//}).then((res) => console.log(res))
-//.catch((err) => console.log(err));
+//showConf(conf);
+//showOpt(opt);
 
 logClient.get(Object.assign(conf, opt))
   .then((res) => console.log(res))
   .catch((err) => console.log(err))
 
-//showConf(conf);
-//showOpt(opt);
 
 
