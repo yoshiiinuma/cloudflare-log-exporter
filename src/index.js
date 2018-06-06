@@ -1,4 +1,5 @@
 
+import fs from 'fs';
 import utils from './utils.js';
 import logClient from './log-client.js';
 
@@ -10,6 +11,7 @@ function usage() {
   console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default 10 minutes before now");
   console.log("     -r or --duration:   [1-60]{s|sec|secs|m|min|mins} default 1m");
   console.log("     -c or --count:      max number of log data to retrieve");
+  console.log("     -o or --output:     output goes to a specified file or default file instead stdout");
   console.log("     -h or --help:       show this message");
   console.log();
 }
@@ -17,14 +19,19 @@ function usage() {
 var opt = {
   env: 'development',
   startTime: utils.getTimeXminAgo(10),
-  duration: 60000
+  duration: 60000,
+  //output: process.stdout,
+  toFile: false
 };
 
 var args = process.argv.slice(2);
 
 while(args.length > 0) {
   let arg = args.shift();
-  if (arg === '-e' || arg === '--env') {
+  if (arg === '-h' || arg === '--help') {
+    usage();
+    process.exit();
+  } else if (arg === '-e' || arg === '--env') {
     opt.env = args.shift();
   } else if (arg === '-s' || arg === '--starttime') {
     opt.originalStartTime = args.shift();
@@ -35,6 +42,11 @@ while(args.length > 0) {
     opt.duration = utils.convDuration(dur);
   } else if (arg === '-c' || arg === '--count') {
     opt.count = args.shift();
+  } else if (arg === '-o' || arg === '--output') {
+    opt.toFile = true;
+    if (args[0] && !args[0].startsWith('-')) {
+      opt.outfile = args.shift();
+    }
   } else {
     console.log('Invalid Argument: ' + arg);
     usage();
@@ -95,9 +107,24 @@ const showOpt = (opt) => {
 //showConf(conf);
 //showOpt(opt);
 
+let arg = Object.assign(conf, opt);
+
+//console.log(arg);
+
+if (arg.toFile) {
+  if (!arg.outfile) arg.outfile = utils.getDefaultLogFileName(arg);
+  arg.output = fs.createWriteStream(arg.outfile);
+} else {
+  arg.output = process.stdout;
+}
+
+
 logClient.get(Object.assign(conf, opt))
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err))
+  .pipe(arg.output);
+  //.pipe(process.stdout);
+
+  //.then((res) => console.log(res))
+  //.catch((err) => console.log(err))
 
 
 

@@ -1,5 +1,6 @@
 
-import rp from 'request-promise';
+import zlib from 'zlib';
+import request from 'request';
 import utils from './utils.js';
 
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
@@ -17,14 +18,15 @@ let logClient = {};
 logClient.get = (arg) => {
   let url = generateLogApiUrl(arg);
 
-  return rp({
+  return request({
     uri: url,
     json: true,
+    gzip: true,
     headers: {
       'X-Auth-Key': arg.auth_key,
       'X-Auth-Email': arg.auth_email
     }
-  })
+  });
 };
 
 export default logClient;

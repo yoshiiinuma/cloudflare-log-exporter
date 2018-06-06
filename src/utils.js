@@ -52,4 +52,15 @@ utils.toISOStringWithoutMS = (time) => {
   return time.toISOString().replace(/\.\d{3}Z/, 'Z'); 
 }
 
+utils.flattenTime = (time) => {
+  if (typeof time === 'number') time = new Date(time);
+  return time.toISOString().replace(/\.\d{3}Z/, '').replace(/[:\-T]/g,''); 
+}
+
+utils.getDefaultLogFileName = (arg) => {
+  let stime = utils.flattenTime(arg.startTime);
+  let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
+  return 'log.' + stime + '-' + etime + '.json' 
+}
+
 export default utils;
