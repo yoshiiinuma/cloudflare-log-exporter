@@ -57,10 +57,10 @@ utils.flattenTime = (time) => {
   return time.toISOString().replace(/\.\d{3}Z/, '').replace(/[:\-T]/g,''); 
 }
 
-utils.getDefaultLogFileName = (arg) => {
+utils.getDefaultLogFileName = (arg, prefix = 'log') => {
   let stime = utils.flattenTime(arg.startTime);
   let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
-  return 'log.' + stime + '-' + etime + '.json' 
+  return prefix + '.' + stime + '-' + etime + '.json' 
 }
 
 export default utils;
