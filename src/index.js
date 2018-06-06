@@ -20,7 +20,6 @@ var opt = {
   env: 'development',
   startTime: utils.getTimeXminAgo(10),
   duration: 60000,
-  //output: process.stdout,
   toFile: false
 };
 
@@ -121,10 +120,6 @@ if (arg.toFile) {
 
 logClient.get(Object.assign(conf, opt))
   .pipe(arg.output);
-  //.pipe(process.stdout);
-
-  //.then((res) => console.log(res))
-  //.catch((err) => console.log(err))
 
 
 

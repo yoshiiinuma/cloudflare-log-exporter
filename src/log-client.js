@@ -26,6 +26,8 @@ logClient.get = (arg) => {
       'X-Auth-Key': arg.auth_key,
       'X-Auth-Email': arg.auth_email
     }
+  }).on('error', (err) => {
+    console.log(err);
   });
 };
 
