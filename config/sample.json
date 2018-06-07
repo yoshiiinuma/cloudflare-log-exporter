@@ -1,5 +1,5 @@
 {
- "zone_id": "ZONE ID",
- "auth_email": "email@test.com",
- "auth_key": "AUTH KEY" 
+ "zoneId": "ZONE ID",
+ "authEmail": "email@test.com",
+ "authKey": "AUTH KEY"
 }

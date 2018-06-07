@@ -29,6 +29,23 @@ utils.addTime = (time, millisecs) => {
   }
 }
 
+const regexSampleRate = /^(1|0\.\d+)$/;
+
+utils.parseSampleRate = (str) => {
+  if (!regexSampleRate.test(str)) return null;
+  return Number(str);
+}
+
+const regexDate = /^\d{4}-\d{2}-\d{2}$/;
+
+utils.parseDate = (str, hh = 0, mm = 0, ss = 0) => {
+  if (!regexDate.test(str)) return null;
+  let ms = Date.parse(str);
+  if (!ms) return null;
+  ms = ms + ((hh + 10) * 3600 + mm * 60 + ss) * 1000
+  return new Date(ms);
+}
+
 utils.parseTime = (str) => {
   let ms = Date.parse(str);
   if (!ms) return null;
@@ -61,6 +78,11 @@ utils.getDefaultLogFileName = (arg, prefix = 'log') => {
   let stime = utils.flattenTime(arg.startTime);
   let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
   return prefix + '.' + stime + '-' + etime + '.json' 
+}
+
+utils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
+  let date = new Date(new Date() - 86400 * 1000);
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, ss);
 }
 
 export default utils;

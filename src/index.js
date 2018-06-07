@@ -3,6 +3,8 @@ import fs from 'fs';
 import utils from './utils.js';
 import logClient from './log-client.js';
 
+const DEFAULT_SAMPLE_RATE = 0.01;
+
 function usage() {
   console.log("\n Usage: npm run exec -- [OPTIONS]");
   console.log(" Usage: node dist/index.js [OPTIONS]");
@@ -11,7 +13,8 @@ function usage() {
   console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default 10 minutes before now");
   console.log("     -r or --duration:   [1-60]{s|sec|secs|m|min|mins} default 1m");
   console.log("     -c or --count:      max number of log data to retrieve");
-  console.log("     -o or --output:     output goes to a specified file or default file instead stdout");
+  console.log("     -o or --output:     option <FILENAME>; output goes to a specified file or default file instead stdout");
+  console.log("     --sample:           sampling rate eg. 0.01 default 0.01");
   console.log("     -h or --help:       show this message");
   console.log();
 }
@@ -45,6 +48,14 @@ while(args.length > 0) {
     opt.toFile = true;
     if (args[0] && !args[0].startsWith('-')) {
       opt.outfile = args.shift();
+    }
+  } else if (arg === '--sample') {
+    opt.sample = true;
+    if (args[0] && !args[0].startsWith('-')) {
+      opt.origSampleRate = args.shift();
+      opt.sampleRate = utils.parseSampleRate(opt.origSampleRate);
+    } else {
+      opt.sampleRate = DEFAULT_SAMPLE_RATE;
     }
   } else {
     console.log('Invalid Argument: ' + arg);
@@ -82,6 +93,14 @@ if (opt.count) {
   opt.count = parseInt(opt.count);
 }
 
+if (opt.sample) {
+  if (!opt.sampleRate) {
+    console.log(" Invalid Sample Rate: " + opt.origSampleRate);
+    usage();
+    process.exit();
+  }
+}
+
 let confFile = './config/' + opt.env + '.json';
 const conf = utils.jsonToObject(confFile);
 if (!conf) {
@@ -108,7 +127,7 @@ const showOpt = (opt) => {
 
 let arg = Object.assign(conf, opt);
 
-//console.log(arg);
+console.log(arg);
 
 if (arg.toFile) {
   if (!arg.outfile) arg.outfile = utils.getDefaultLogFileName(arg);
@@ -117,8 +136,7 @@ if (arg.toFile) {
   arg.output = process.stdout;
 }
 
-
-logClient.get(Object.assign(conf, opt))
+logClient.get(Object.assign(arg))
   .pipe(arg.output);
 
 
