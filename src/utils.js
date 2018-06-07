@@ -3,6 +3,19 @@ import fs from 'fs';
 
 let utils = {};
 
+export const DEFAULT_OUTPUT_DIR = './output';
+export const DEFAULT_ARCHIVE_DIR = './archive';
+
+utils.mkdir = (path) => {
+  path.split('/').reduce((curPath, folder) => {
+    curPath += folder + '/';
+    if (!fs.existsSync(curPath)) {
+      fs.mkdirSync(curPath);
+    }
+    return curPath;
+  }, '');
+}
+
 const regexDur = /^([1-9]|[1-5]\d|60|)(s|sec|secs|m|min|mins)$/i;
 
 utils.convDuration = (str) => {
@@ -10,9 +23,9 @@ utils.convDuration = (str) => {
 
   let match = regexDur.exec(str);
   if (match[2].startsWith('m')) {
-    return parseInt(match[1]) * 60 * 1000; 
+    return parseInt(match[1]) * 60 * 1000;
   } else {
-    return parseInt(match[1]) * 1000; 
+    return parseInt(match[1]) * 1000;
   }
 }
 
@@ -53,7 +66,7 @@ utils.parseTime = (str) => {
 }
 
 utils.dropMillisecs = (timeInMs) => {
-  return Math.floor(timeInMs / 1000) * 1000; 
+  return Math.floor(timeInMs / 1000) * 1000;
 }
 
 utils.getTimeXminAgoInMS = (min) => {
@@ -66,18 +79,26 @@ utils.getTimeXminAgo = (min) => {
 
 utils.toISOStringWithoutMS = (time) => {
   if (typeof time === 'number') time = new Date(time);
-  return time.toISOString().replace(/\.\d{3}Z/, 'Z'); 
+  return time.toISOString().replace(/\.\d{3}Z/, 'Z');
 }
 
 utils.flattenTime = (time) => {
   if (typeof time === 'number') time = new Date(time);
-  return time.toISOString().replace(/\.\d{3}Z/, '').replace(/[:\-T]/g,''); 
+  return time.toISOString().replace(/\.\d{3}Z/, '').replace(/[:\-T]/g,'');
+}
+
+utils.flattenDate = (time) => {
+  return utils.flattenTime(time).substring(0, 8);
 }
 
 utils.getDefaultLogFileName = (arg, prefix = 'log') => {
   let stime = utils.flattenTime(arg.startTime);
   let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
-  return prefix + '.' + stime + '-' + etime + '.json' 
+  let path = arg.outputDir || DEFAULT_OUTPUT_DIR;
+  if (!path.endsWith('/')) path += '/';
+  path += utils.flattenDate(arg.startTime) + '/';
+  utils.mkdir(path);
+  return path + prefix + '.' + stime + '-' + etime + '.json';
 }
 
 utils.getYesterday = (hh = 0, mm = 0, ss = 0) => {

@@ -19,8 +19,6 @@ let logClient = {};
 logClient.get = (arg) => {
   let url = generateLogApiUrl(arg);
 
-  console.log(url);
-
   return request({
     uri: url,
     json: true,

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "exec": "babel-node src/index.js",
+    "archive": "babel-node src/archive.js",
     "build": "babel src --out-dir dist"
   },
   "repository": {

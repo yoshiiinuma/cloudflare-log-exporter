@@ -1,5 +1,7 @@
 {
  "zoneId": "ZONE ID",
  "authEmail": "email@test.com",
- "authKey": "AUTH KEY"
+ "authKey": "AUTH KEY",
+ "outputDir": "./output",
+ "archiveDir": "./archive"
 }
