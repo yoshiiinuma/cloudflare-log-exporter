@@ -109,25 +109,7 @@ if (!conf) {
   process.exit();
 }
 
-const showConf = (conf) => { 
-  console.log(' ZONE ID:     ' + conf.zone_id);
-  console.log(' AUTH EMAIL:  ' + conf.auth_email);
-  console.log(' AUTH KEY:    ' + conf.auth_key);
-}
-
-const showOpt = (opt) => {
-  console.log(' ENV:         ' + opt.env);
-  console.log(' Start:       ' + utils.toISOStringWithoutMS(opt.startTime));
-  console.log(' Duration:    ' + opt.duration);
-  console.log(' Count:       ' + opt.count);
-}
-
-//showConf(conf);
-//showOpt(opt);
-
 let arg = Object.assign(conf, opt);
-
-console.log(arg);
 
 if (arg.toFile) {
   if (!arg.outfile) arg.outfile = utils.getDefaultLogFileName(arg);
