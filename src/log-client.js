@@ -16,10 +16,6 @@ const generateLogApiUrl = (arg) => {
 
 let logClient = {};
 
-logClient.sample = (arg) => {
-  arg.duration = 8 * 60 * 60 * 1000;
-}
-
 logClient.get = (arg) => {
   let url = generateLogApiUrl(arg);
 
