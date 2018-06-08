@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import utils from './utils.js';
-import logClient from './log-client.js';
+import ArchiveManager from './archive-manager.js';
 
 function usage() {
   console.log("\n Usage: npm run archive -- [OPTIONS]");
@@ -14,10 +14,10 @@ function usage() {
   console.log();
 }
 
-
 var opt = {
   env: 'development',
-  date: new Date(2018, 6, 6)
+  date: utils.parseDate('2018-06-06'),
+  hour: 10
 };
 
 var args = process.argv.slice(2);
@@ -31,8 +31,10 @@ while(args.length > 0) {
     opt.env = args.shift();
   } else if (arg === '--date') {
     opt.originalDate = args.shift();
+    opt.date = utils.parseDate(opt.originalDate);
   } else if (arg === '--hour') {
     opt.originalHour = args.shift();
+    opt.hour = parseInt(opt.originalHour);
   } else {
     console.log('Invalid Argument: ' + arg);
     usage();
@@ -46,7 +48,17 @@ if (opt.env != 'development' && opt.env != 'production') {
   process.exit();
 }
 
-opt.date = utils.parseDate(opt.originalDate, opt.originalHour);
+if (!opt.date) {
+  console.log(" Invalid Date: " + opt.originalDate);
+  usage();
+  process.exit();
+}
+
+if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
+  console.log(" Invalid Hour: " + opt.originalHour);
+  usage();
+  process.exit();
+}
 
 let confFile = './config/' + opt.env + '.json';
 const conf = utils.jsonToObject(confFile);
@@ -58,17 +70,13 @@ if (!conf) {
 
 let arg = Object.assign(conf, opt);
 
-let infile = 'log.20180606190000-20180606190100.json';
-let outfile = '201806061900.gz';
+let infile = 'output/20180606/log.20180606200000-20180606200100.json';
+let outfile = '201806062000.gz';
 
-import zlib from 'zlib';
+//console.log(arg);
+//console.log('2018-06-06 => ' + utils.parseDate('2018-06-06').toISOString());
+//console.log('2018-06-06 10 => ' + utils.parseDate('2018-06-06', 10).toISOString());
+//console.log('2018-06-06 "10" => ' + utils.parseDate('2018-06-06', '10').toISOString());
 
-let gzip = zlib.createGzip();
-let outstream = fs.createWriteStream(outfile);
+ArchiveManager.createHourlyArchive(arg);
 
-fs.createReadStrema(infile)
-  .pipe(gzip)
-  .pipe(outstream)
-  .on('finish', () => {
-    console.log('Archive Complete!')
-  });

@@ -112,7 +112,7 @@ if (!conf) {
 let arg = Object.assign(conf, opt);
 
 if (arg.toFile) {
-  if (!arg.outfile) arg.outfile = utils.getDefaultLogFileName(arg);
+  if (!arg.outfile) arg.outfile = utils.getLogFileName(arg);
   arg.output = fs.createWriteStream(arg.outfile);
 } else {
   arg.output = process.stdout;
@@ -120,6 +120,4 @@ if (arg.toFile) {
 
 logClient.get(Object.assign(arg))
   .pipe(arg.output);
-
-
 
