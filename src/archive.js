@@ -79,4 +79,5 @@ let outfile = '201806062000.gz';
 //console.log('2018-06-06 "10" => ' + utils.parseDate('2018-06-06', '10').toISOString());
 
 ArchiveManager.createHourlyArchive(arg);
+//ArchiveManager.test(arg);
 
