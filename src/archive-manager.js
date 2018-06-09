@@ -78,5 +78,13 @@ ArchiveManager.createHourlyArchive = (arg) => {
 ArchiveManager.createDailyArchive = (date) => {
 }
 
+ArchiveManager.viewHourlyArchive = (arg) => {
+  let gzfile = utils.getArchiveFileName(arg);
+  let gunzip = zlib.createGunzip();
+  let instream = fs.createReadStream(gzfile)
+    .on('error', (err) => { console.log(err) });
+  instream.pipe(gunzip).pipe(process.stdout);
+}
+
 export default ArchiveManager;
 
