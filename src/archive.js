@@ -70,14 +70,5 @@ if (!conf) {
 
 let arg = Object.assign(conf, opt);
 
-let infile = 'output/20180606/log.20180606200000-20180606200100.json';
-let outfile = '201806062000.gz';
-
-//console.log(arg);
-//console.log('2018-06-06 => ' + utils.parseDate('2018-06-06').toISOString());
-//console.log('2018-06-06 10 => ' + utils.parseDate('2018-06-06', 10).toISOString());
-//console.log('2018-06-06 "10" => ' + utils.parseDate('2018-06-06', '10').toISOString());
-
 ArchiveManager.createHourlyArchive(arg);
-//ArchiveManager.test(arg);
 
