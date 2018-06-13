@@ -104,7 +104,8 @@ ArchiveManager.createDailyArchive = (arg) => {
  */
 ArchiveManager.viewHourlyArchive = (arg) => {
   let gzfile = MyUtils.getArchiveFileName(arg);
-  let gunzip = zlib.createGunzip();
+  let gunzip = zlib.createGunzip()
+    .on('error', (err) => { Logger.error(err) });
   let instream = fs.createReadStream(gzfile)
     .on('error', (err) => { Logger.error(err) });
   instream.pipe(gunzip).pipe(process.stdout);

@@ -76,19 +76,12 @@ Logger.initialize(arg);
 if (arg.hour) {
   ArchiveManager.createHourlyArchive(arg)
     .then((msg) => console.log(msg))
-    //.then((gzfile) => {
-    //  if (gzfile) {
-    //    console.log(MyUtils.toLocalTime(arg) + ' Archive Complete! => ' + gzfile);
-    //  } else {
-    //    console.log(MyUtils.toLocalTime(arg) + ' No Log Files');
-    //  }
-    //})
-    .catch((err) => console.log(err));
+    .catch((err) => Logger.error(err));
 } else {
   ArchiveManager.createDailyArchive(arg)
     .then((results) => {
       results.map((msg) => console.log(msg))
     })
-    .catch((err) => console.log(err));
+    .catch((err) => Logger.error(err));
 }
 
