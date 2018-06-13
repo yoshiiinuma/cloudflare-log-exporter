@@ -1,7 +1,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { PassThrough } from 'stream';
 
 import StreamConcat from 'stream-concat'
 import zlib from 'zlib';
