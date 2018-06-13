@@ -33,6 +33,7 @@
     "babel-preset-es2015": "^6.24.1"
   },
   "dependencies": {
+    "dateformat": "^3.0.3",
     "fs": "0.0.1-security",
     "request": "^2.87.0",
     "stream-concat": "^0.3.0",

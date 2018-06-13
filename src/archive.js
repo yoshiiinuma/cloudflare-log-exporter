@@ -16,8 +16,6 @@ function usage() {
 
 var opt = {
   env: 'development',
-  date: utils.parseDate('2018-06-06'),
-  hour: 10
 };
 
 var args = process.argv.slice(2);
@@ -54,10 +52,12 @@ if (!opt.date) {
   process.exit();
 }
 
-if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
-  console.log(" Invalid Hour: " + opt.originalHour);
-  usage();
-  process.exit();
+if (opt.hour) {
+  if (opt.hour < 0 || opt.hour > 23) {
+    console.log(" Invalid Hour: " + opt.originalHour);
+    usage();
+    process.exit();
+  }
 }
 
 let confFile = './config/' + opt.env + '.json';
@@ -70,5 +70,22 @@ if (!conf) {
 
 let arg = Object.assign(conf, opt);
 
-ArchiveManager.createHourlyArchive(arg);
+if (arg.hour) {
+  ArchiveManager.createHourlyArchive(arg)
+    .then((msg) => console.log(msg))
+    //.then((gzfile) => {
+    //  if (gzfile) {
+    //    console.log(utils.toLocalTime(arg) + ' Archive Complete! => ' + gzfile);
+    //  } else {
+    //    console.log(utils.toLocalTime(arg) + ' No Log Files');
+    //  }
+    //})
+    .catch((err) => console.log(err));
+} else {
+  ArchiveManager.createDailyArchive(arg)
+    .then((results) => {
+      results.map((msg) => console.log(msg))
+    })
+    .catch((err) => console.log(err));
+}
 

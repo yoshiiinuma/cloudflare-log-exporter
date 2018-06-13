@@ -9,75 +9,108 @@ import utils from './utils.js';
 
 let ArchiveManager = {}
 
-ArchiveManager.gunzip = (infile, outfile) => {
-  let gzip = zlib.createGzip();
-  let outstream = fs.createWriteStream(outfile);
+let debug = false;
 
-  fs.createReadStream(infile)
-    .pipe(gzip)
-    .pipe(outstream)
-    .on('finish', () => {
-      console.log('Archive Complete!')
-    })
-    .on('error', (err) => console.log(err));
+ArchiveManager.enableDebug = () => {
+  debug = true;
 }
 
-/**
- * arg:
- *   date
- *   hour
- *   outputDir  
- */
-let setupWriteStream = (ws, name) => {
-  ws.on('finish', () => { console.log(name + ' finish') })
-    .on('close', () => { console.log(name + ' close') })
-    .on('error', (err) => { console.log(err) });
-};
+ArchiveManager.disableDebug = () => {
+  debug = false;
+}
 
-let createGzip = () => {
+const setupGzip = (resolve, reject) => {
   return zlib.createGzip()
-    .on('end', () => { console.log('gzip  end') })
-    .on('finish', () => { console.log('gzip  finish') })
-    .on('close', () => { console.log('gzip  close') })
-    .on('error', (err) => { console.log(err) });
+    .on('end', () => { if (debug) console.log('gzip  end') })
+    .on('finish', () => { if (debug) console.log('gzip  finish') })
+    .on('close', () => { if (debug) console.log('gzip  close') })
+    .on('error', (err) => {
+      if (debug) console.log(err);
+      reject(err);
+    });
 };
 
-let createWriteStream = (fpath) => {
+const setupWriteStream = (fpath, resolve, reject) => {
   let f = path.basename(fpath)
   return fs.createWriteStream(fpath)
-    .on('finish', () => { console.log(f + ' end') })
-    .on('close', () => { console.log(f + ' close') })
-    .on('error', (err) => { console.log(err) });
+    .on('finish', () => { if (debug) console.log(f + ' end') })
+    .on('close', () => {
+      if (debug) console.log(f + ' close');
+      resolve();
+    })
+    .on('error', (err) => {
+      if (debug) console.log(err);
+      reject(err);
+    });
 };
 
-ArchiveManager.createHourlyArchive = (arg) => {
+/**
+ * arg: { date, hour, outputDir }
+ */
+ArchiveManager.getHourlyLogFiles = (arg) => {
   let dir = utils.getLogFileDir(arg.date, arg.outputDir);
-  let pattern = utils.getLogFilePattern(arg.date, arg.hour); 
-  let gzfile = utils.getArchiveFileName(arg);
-
+  let pattern = utils.getLogFilePattern(arg.date, arg.hour);
   let files = fs.readdirSync(dir).filter((f) => {
     return pattern.test(f);
   });
+  return files;
+}
+
+/**
+ * arg: { date, outputDir }
+ */
+const getConcatHourlyLogStreams = (arg, resolve, reject) => {
+  let dir = utils.getLogFileDir(arg.date, arg.outputDir);
+  let files = ArchiveManager.getHourlyLogFiles(arg)
+  if (files.length == 0) return null;
 
   let index = 0;
   let nextStream = () => {
     if (index === files.length) {
       return null;
     }
-    return fs.createReadStream(dir + '/' + files[index++]);
+    return fs.createReadStream(dir + '/' + files[index++])
+      .on('error', (err) => reject(err));
   }
 
-  let gzip = createGzip();
-  let outstream = createWriteStream(gzfile);
-  let pt = new StreamConcat(nextStream);
-  
-  pt.pipe(gzip).pipe(outstream);
-  console.log('Archive Complete! => ' + gzfile)
+  return new StreamConcat(nextStream);
 }
 
-ArchiveManager.createDailyArchive = (date) => {
+/**
+ * arg: { date, hour, archiveDir, outputDir }
+ */
+ArchiveManager.createHourlyArchive = (arg) => {
+  return new Promise((resolve, reject) => {
+    let gzfile = utils.getArchiveFileName(arg);
+    let r = utils.toLocalTime(arg) + ' => ';
+    let success = () => { resolve(r + gzfile) }
+    let gzip = setupGzip(resolve, reject);
+    let outStream = setupWriteStream(gzfile, success, reject);
+    let inputStreams = getConcatHourlyLogStreams(arg, resolve, reject);
+
+    if (!inputStreams) { resolve(r + 'none'); }
+    inputStreams.pipe(gzip).pipe(outStream);
+  });
 }
 
+/**
+ * arg: { date, archiveDir, outputDir }
+ */
+ArchiveManager.createDailyArchive = (arg) => {
+  return Promise.all(
+    Array.from(Array(24).keys()).map((i) => {
+      return ArchiveManager.createHourlyArchive({
+        date: arg.date,
+        hour: i,
+        outputDir: arg.outputDir
+      });
+    })
+  );
+}
+
+/**
+ * arg: { date, hour, archiveDir }
+ */
 ArchiveManager.viewHourlyArchive = (arg) => {
   let gzfile = utils.getArchiveFileName(arg);
   let gunzip = zlib.createGunzip();

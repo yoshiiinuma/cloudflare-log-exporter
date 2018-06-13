@@ -1,5 +1,6 @@
 
 import fs from 'fs';
+import dateFormat from 'dateformat';
 
 let utils = {};
 
@@ -98,6 +99,32 @@ utils.getTimeXminAgo = (min) => {
   return new Date(utils.getTimeXminAgoInMS(min));
 }
 
+utils.toLocalDate = (time) => {
+  return dateFormat(time, 'yyyy-mm-dd');
+}
+
+utils.toLocalDateTime = (time) => {
+  return dateFormat(time, 'yyyy-mm-dd HH:MM');
+}
+
+utils.toLocalTime = (arg) => {
+  if (arg.hour || arg.hour == 0) {
+    return utils.toLocalDate(arg.date) + 'T' + arg.hour.toString().padStart(2, '0') + ':00';
+  } else {
+    return utils.toLocalDate(arg.date);
+  }
+}
+
+utils.toLocalDateString = (time) => {
+  if (typeof time === 'number') time = new Date(time);
+  return time.toLocalDateString();
+}
+
+utils.toLocalTimeString = (time) => {
+  if (typeof time === 'number') time = new Date(time);
+  return time.toLocalDateString() + 'T' + time.toLocalTimeString().replace(/:\d{2}$/, '');
+}
+
 utils.toISOStringWithoutMS = (time) => {
   if (typeof time === 'number') time = new Date(time);
   return time.toISOString().replace(/\.\d{3}Z/, 'Z');
@@ -132,6 +159,9 @@ utils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
   return path;
 }
 
+/**
+ * arg: { startTime, duration, outputDir }
+ */
 utils.getLogFileName = (arg, prefix = 'log.') => {
   let stime = utils.flattenTime(arg.startTime);
   let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
@@ -151,6 +181,9 @@ utils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
   return path;
 }
 
+/**
+ * arg: { date, hour, archiveDir }
+ */
 utils.getArchiveFileName = (arg) => {
   let date = utils.addTime(arg.date, arg.hour * 3600 * 1000);
   let path = utils.getArchiveDir(date, arg.archiveDir);
