@@ -55,8 +55,15 @@ MyUtils.jsonToObject = (path) => {
 /**
  * arg: { env }
  */
+MyUtils.config = (arg) => {
+  return './config/' + arg.env + '.json';
+}
+
+/**
+ * arg: { env }
+ */
 MyUtils.loadConfig = (arg) => {
-  let confFile = './config/' + arg.env + '.json';
+  let confFile = MyUtils.config(arg);
   return MyUtils.jsonToObject(confFile);
 }
 

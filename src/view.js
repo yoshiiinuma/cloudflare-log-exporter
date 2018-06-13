@@ -62,7 +62,7 @@ if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
 
 const conf = MyUtils.loadConfig(opt);
 if (!conf) {
-  console.log('Configuration File Not Found: ' + confFile);
+  console.log('Configuration File Not Found: ' + MyUtils.config(opt));
   usage();
   process.exit();
 }
