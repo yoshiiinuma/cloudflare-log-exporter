@@ -1,6 +1,6 @@
 
 import fs from 'fs';
-import myUtils from './my-utils.js';
+import MyUtils from './my-utils.js';
 import Logger from './logger.js';
 import logClient from './log-client.js';
 
@@ -23,7 +23,7 @@ function usage() {
 
 var opt = {
   env: 'development',
-  startTime: myUtils.getTimeXminAgo(WAIT_MINS),
+  startTime: MyUtils.getTimeXminAgo(WAIT_MINS),
   duration: 60000,
   toFile: false
 };
@@ -39,11 +39,11 @@ while(args.length > 0) {
     opt.env = args.shift();
   } else if (arg === '-s' || arg === '--starttime') {
     opt.originalStartTime = args.shift();
-    opt.startTime = myUtils.parseTime(opt.originalStartTime);
+    opt.startTime = MyUtils.parseTime(opt.originalStartTime);
   } else if (arg === '-r' || arg === '--duration') {
     let dur = args.shift();
     opt.originalDuration = dur;
-    opt.duration = myUtils.convDuration(dur);
+    opt.duration = MyUtils.convDuration(dur);
   } else if (arg === '-c' || arg === '--count') {
     opt.count = args.shift();
   } else if (arg === '-o' || arg === '--output') {
@@ -55,7 +55,7 @@ while(args.length > 0) {
     opt.sample = true;
     if (args[0] && !args[0].startsWith('-')) {
       opt.origSampleRate = args.shift();
-      opt.sampleRate = myUtils.parseSampleRate(opt.origSampleRate);
+      opt.sampleRate = MyUtils.parseSampleRate(opt.origSampleRate);
     } else {
       opt.sampleRate = DEFAULT_SAMPLE_RATE;
     }
@@ -103,8 +103,7 @@ if (opt.sample) {
   }
 }
 
-let confFile = './config/' + opt.env + '.json';
-const conf = myUtils.jsonToObject(confFile);
+const conf = MyUtils.loadConfig(opt);
 if (!conf) {
   console.log('Configuration File Not Found: ' + confFile);
   usage();
@@ -114,7 +113,7 @@ if (!conf) {
 let arg = Object.assign(conf, opt);
 
 if (arg.toFile) {
-  if (!arg.outfile) arg.outfile = myUtils.getLogFileName(arg);
+  if (!arg.outfile) arg.outfile = MyUtils.getLogFileName(arg);
   arg.output = fs.createWriteStream(arg.outfile);
 } else {
   arg.output = process.stdout;

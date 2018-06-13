@@ -61,8 +61,7 @@ if (opt.hour) {
   }
 }
 
-let confFile = './config/' + opt.env + '.json';
-const conf = MyUtils.jsonToObject(confFile);
+const conf = MyUtils.loadConfig(opt);
 if (!conf) {
   console.log('Configuration File Not Found: ' + confFile);
   usage();

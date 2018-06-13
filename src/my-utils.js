@@ -52,6 +52,14 @@ MyUtils.jsonToObject = (path) => {
   return JSON.parse(fs.readFileSync(path));
 }
 
+/**
+ * arg: { env }
+ */
+MyUtils.loadConfig = (arg) => {
+  let confFile = './config/' + arg.env + '.json';
+  return MyUtils.jsonToObject(confFile);
+}
+
 const regexSampleRate = /^(1|0\.\d+)$/;
 
 MyUtils.parseSampleRate = (str) => {
