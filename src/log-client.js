@@ -2,7 +2,7 @@
 import zlib from 'zlib';
 import request from 'request';
 import MyUtils from './my-utils.js';
-import Log from './logger.js';
+import Logger from './logger.js';
 
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
 

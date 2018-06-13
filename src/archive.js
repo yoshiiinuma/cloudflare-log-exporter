@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import MyUtils from './my-utils.js';
-import Log from './logger.js';
+import Logger from './logger.js';
 import ArchiveManager from './archive-manager.js';
 
 function usage() {
