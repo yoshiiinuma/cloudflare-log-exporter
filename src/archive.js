@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import MyUtils from './my-utils.js';
-import Log from './logging.js';
+import Log from './logger.js';
 import ArchiveManager from './archive-manager.js';
 
 function usage() {
@@ -71,7 +71,7 @@ if (!conf) {
 
 let arg = Object.assign(conf, opt);
 
-Log.initialize(arg);
+Logger.initialize(arg);
 
 if (arg.hour) {
   ArchiveManager.createHourlyArchive(arg)

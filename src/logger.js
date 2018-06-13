@@ -3,9 +3,9 @@ import fs from 'fs';
 import util from 'util';
 import dateFormat from 'dateformat';
 
-let Log = {};
+let Logger = {};
 
-Log.Type = {
+Logger.Type = {
   DEBUG: 1,
   INFO: 2,
   WARN: 3,
@@ -21,7 +21,7 @@ const Label = {
   FATAL: 'FATAL' 
 };
 
-const DEFAULT_LOG_LEVEL = Log.Type.ERROR;
+const DEFAULT_LOG_LEVEL = Logger.Type.ERROR;
 const DEFAULT_LOG_DIR = './logs';
 const DEFAULT_LOG_FILE = 'default.log';
 
@@ -58,63 +58,63 @@ const switchToFile = () => {
   append = appendToFile;
 }
 
-Log.enable = () => {
+Logger.enable = () => {
   logEnabled = true;
   switchToFile();
 }
 
-Log.disable = () => {
+Logger.disable = () => {
   logEnabled = false;
   switchToStdout();
 }
 
-Log.setLogFile = (filePath) => { logFile = filePath; }
+Logger.setLogFile = (filePath) => { logFile = filePath; }
 
-Log.showStatus = () => {
+Logger.showStatus = () => {
   console.log(' Log Enabled: ' + logEnabled);
-  console.log(' Log Level  : ' + Log.convLevelToString(logLevel));
+  console.log(' Log Level  : ' + Logger.convLevelToString(logLevel));
   console.log(' Log File   : ' + logFile);
 }
 
-Log.convStringLevel = (level) => {
+Logger.convStringLevel = (level) => {
   if (typeof level === 'string') {
     level = level.toLowerCase();
-    if (level === 'debug') return Log.Type.DEBUG;
-    if (level === 'info') return Log.Type.INFO;
-    if (level === 'warn') return Log.Type.WARN;
-    if (level === 'error') return Log.Type.ERROR;
-    if (level === 'fatal') return Log.Type.FATAL;
+    if (level === 'debug') return Logger.Type.DEBUG;
+    if (level === 'info') return Logger.Type.INFO;
+    if (level === 'warn') return Logger.Type.WARN;
+    if (level === 'error') return Logger.Type.ERROR;
+    if (level === 'fatal') return Logger.Type.FATAL;
   }
 }
 
-Log.convLevelToString = (level) => {
+Logger.convLevelToString = (level) => {
   if (typeof level === 'number') {
-    if (level === Log.Type.DEBUG) return 'DEBUG';
-    if (level === Log.Type.INFO) return 'INFO';
-    if (level === Log.Type.WARN) return 'WARN';
-    if (level === Log.Type.ERROR) return 'ERROR';
-    if (level === Log.Type.FATAL) return 'FATAL';
+    if (level === Logger.Type.DEBUG) return 'DEBUG';
+    if (level === Logger.Type.INFO) return 'INFO';
+    if (level === Logger.Type.WARN) return 'WARN';
+    if (level === Logger.Type.ERROR) return 'ERROR';
+    if (level === Logger.Type.FATAL) return 'FATAL';
   }
 }
 
-Log.setLogLevel = (level) => {
+Logger.setLogLevel = (level) => {
   if (typeof level === 'number') {
     logLevel = level;
   }
   if (typeof level === 'string') {
     level = level.toLowerCase();
     if (level === 'debug') {
-      logLevel = Log.Type.DEBUG;
+      logLevel = Logger.Type.DEBUG;
     } else if (level === 'info') {
-      logLevel = Log.Type.INFO;
+      logLevel = Logger.Type.INFO;
     } else if (level === 'warn') {
-      logLevel = Log.Type.WARN;
+      logLevel = Logger.Type.WARN;
     } else if (level === 'error') {
-      logLevel = Log.Type.ERROR;
+      logLevel = Logger.Type.ERROR;
     } else if (level === 'fatal') {
-      logLevel = Log.Type.FATAL;
+      logLevel = Logger.Type.FATAL;
     } else {
-      logLevel = Log.Type.ERROR;
+      logLevel = Logger.Type.ERROR;
     }
   }
 }
@@ -127,44 +127,44 @@ Log.setLogLevel = (level) => {
  *   logFile (optional)    : path to the log file; ignore logDir if spcified
  *   env (optional)        : makes logFile = logDir + '/' + env + '.log' if specfied
  */
-Log.initialize = (arg) => {
-  if (arg.enableLog) Log.enable();
-  if (arg.logLevel) Log.setLogLevel(arg.logLevel);
+Logger.initialize = (arg) => {
+  if (arg.enableLog) Logger.enable();
+  if (arg.logLevel) Logger.setLogLevel(arg.logLevel);
   if (arg.logFile) {
-    Log.setLogFile(arg.logFile);
+    Logger.setLogFile(arg.logFile);
   } else if (arg.env) {
     let dir = DEFAULT_LOG_DIR;
     if (arg.logDir) {
       dir = arg.logDir;
     }
     if (!dir.endsWith('/')) dir += '/';
-    Log.setLogFile(dir + arg.env + '.log');
+    Logger.setLogFile(dir + arg.env + '.log');
   }
 }
 
-Log.debug = (msg) => {
-  if (logLevel > Log.Type.DEBUG) return;
+Logger.debug = (msg) => {
+  if (logLevel > Logger.Type.DEBUG) return;
   append(Label.DEBUG, msg); 
 }
 
-Log.info = (msg) => {
-  if (logLevel > Log.Type.INFO) return;
+Logger.info = (msg) => {
+  if (logLevel > Logger.Type.INFO) return;
   append(Label.INFO, msg); 
 }
 
-Log.warn = (msg) => {
-  if (logLevel < Log.Type.WARN) return;
+Logger.warn = (msg) => {
+  if (logLevel < Logger.Type.WARN) return;
   append(Label.WARN, msg); 
 }
 
-Log.error = (msg) => {
-  if (logLevel > Log.Type.ERROR) return;
+Logger.error = (msg) => {
+  if (logLevel > Logger.Type.ERROR) return;
   append(Label.ERROR, msg); 
 }
 
-Log.fatal = (msg) => {
-  if (logLevel > Log.Type.FATAL) return;
+Logger.fatal = (msg) => {
+  if (logLevel > Logger.Type.FATAL) return;
   append(Label.FATAL, msg); 
 }
 
-export default Log;
+export default Logger;

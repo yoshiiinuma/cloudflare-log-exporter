@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import myUtils from './my-utils.js';
-import Log from './logging.js';
+import Logger from './logger.js';
 import logClient from './log-client.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
@@ -120,7 +120,7 @@ if (arg.toFile) {
   arg.output = process.stdout;
 }
 
-Log.initialize(arg);
+Logger.initialize(arg);
 
 logClient.get(arg)
   .pipe(arg.output);

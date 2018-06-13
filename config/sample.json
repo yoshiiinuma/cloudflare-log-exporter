@@ -5,6 +5,6 @@
  "outputDir": "./output",
  "archiveDir": "./archive",
  "enableLog": false,
- "logLevel": "debug",
+ "logLevel": "error",
  "logDir": "./logs"
 }

@@ -6,17 +6,17 @@ import { PassThrough } from 'stream';
 import StreamConcat from 'stream-concat'
 import zlib from 'zlib';
 import MyUtils from './my-utils.js';
-import Log from './logging.js';
+import Logger from './logger.js';
 
 let ArchiveManager = {}
 
 const setupGzip = (resolve, reject) => {
   return zlib.createGzip()
-    .on('end', () => { Log.debug('gzip end') })
-    .on('finish', () => { Log.debug('gzip finish') })
-    .on('close', () => { Log.debug('gzip close') })
+    .on('end', () => { Logger.debug('gzip end') })
+    .on('finish', () => { Logger.debug('gzip finish') })
+    .on('close', () => { Logger.debug('gzip close') })
     .on('error', (err) => {
-      Log.error(err);
+      Logger.error(err);
       reject(err);
     });
 };
@@ -24,13 +24,13 @@ const setupGzip = (resolve, reject) => {
 const setupWriteStream = (fpath, resolve, reject) => {
   let f = path.basename(fpath)
   return fs.createWriteStream(fpath)
-    .on('finish', () => { Log.debug(f + ' end') })
+    .on('finish', () => { Logger.debug(f + ' end') })
     .on('close', () => {
-      Log.debug(f + ' close');
+      Logger.debug(f + ' close');
       resolve();
     })
     .on('error', (err) => {
-      Log.error(err);
+      Logger.error(err);
       reject(err);
     });
 };
@@ -106,7 +106,7 @@ ArchiveManager.viewHourlyArchive = (arg) => {
   let gzfile = MyUtils.getArchiveFileName(arg);
   let gunzip = zlib.createGunzip();
   let instream = fs.createReadStream(gzfile)
-    .on('error', (err) => { Log.error(err) });
+    .on('error', (err) => { Logger.error(err) });
   instream.pipe(gunzip).pipe(process.stdout);
 }
 
