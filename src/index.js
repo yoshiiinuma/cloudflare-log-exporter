@@ -4,13 +4,14 @@ import utils from './utils.js';
 import logClient from './log-client.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
+const WAIT_MINS = 15;
 
 function usage() {
   console.log("\n Usage: npm run exec -- [OPTIONS]");
   console.log(" Usage: node dist/index.js [OPTIONS]");
   console.log("\n   OPTIONS");
   console.log("     -e or --env:        development|production default development");
-  console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default 10 minutes before now");
+  console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default " + WAIT_MINS + " minutes before now");
   console.log("     -r or --duration:   [1-60]{s|sec|secs|m|min|mins} default 1m");
   console.log("     -c or --count:      max number of log data to retrieve");
   console.log("     -o or --output:     option <FILENAME>; output goes to a specified file or default file instead stdout");
@@ -21,7 +22,7 @@ function usage() {
 
 var opt = {
   env: 'development',
-  startTime: utils.getTimeXminAgo(10),
+  startTime: utils.getTimeXminAgo(WAIT_MINS),
   duration: 60000,
   toFile: false
 };
