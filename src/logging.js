@@ -1,5 +1,6 @@
 
 import fs from 'fs';
+import util from 'util';
 import dateFormat from 'dateformat';
 
 let Log = {};
@@ -29,17 +30,18 @@ let logLevel = DEFAULT_LOG_LEVEL;
 let logFile = DEFAULT_LOG_DIR + '/' + DEFAULT_LOG_FILE; 
 
 const logFormat = (label, msg) => {
-  let time = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss.l')
-  return time + ' ' + label + ' ' + msg;
+  let time = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss.l');
+  if (typeof msg !== 'string') msg = util.inspect(msg);
+  return time + ' ' + label + ' ' + msg + "\n";
 }
 
 const writeToStdout = (label, msg) => {
-  //process.stdout.write(logFormat(label, msg));
-  console.log(logFormat(label, msg));
+  process.stdout.write(logFormat(label, msg));
+  //console.log(logFormat(label, msg));
 };
 
 const appendToFile = (label, msg) => {
-  fs.appendFile(logFile, logFormat(label, msg) + "\n", (err) => {
+  fs.appendFile(logFile, logFormat(label, msg), (err) => {
     if (err) throw err;
   });
 };
