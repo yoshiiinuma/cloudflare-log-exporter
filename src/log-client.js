@@ -2,6 +2,7 @@
 import zlib from 'zlib';
 import request from 'request';
 import utils from './utils.js';
+import Log from './logging.js';
 
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
 
@@ -28,7 +29,7 @@ logClient.get = (arg) => {
       'X-Auth-Email': arg.authEmail
     }
   }).on('error', (err) => {
-    console.log(err);
+    Log.error(err);
   });
 };
 

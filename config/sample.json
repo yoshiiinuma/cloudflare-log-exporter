@@ -3,5 +3,8 @@
  "authEmail": "email@test.com",
  "authKey": "AUTH KEY",
  "outputDir": "./output",
- "archiveDir": "./archive"
+ "archiveDir": "./archive",
+ "enableLog": false,
+ "logLevel": "debug",
+ "logDir": "./logs"
 }

@@ -1,6 +1,7 @@
 
 import fs from 'fs';
 import utils from './utils.js';
+import Log from './logging.js';
 import logClient from './log-client.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
@@ -119,6 +120,8 @@ if (arg.toFile) {
   arg.output = process.stdout;
 }
 
-logClient.get(Object.assign(arg))
+Log.initialize(arg);
+
+logClient.get(arg)
   .pipe(arg.output);
 
