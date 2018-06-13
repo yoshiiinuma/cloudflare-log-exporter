@@ -2,12 +2,12 @@
 import fs from 'fs';
 import dateFormat from 'dateformat';
 
-let utils = {};
+let MyUtils = {};
 
 export const DEFAULT_OUTPUT_DIR = './output';
 export const DEFAULT_ARCHIVE_DIR = './archive';
 
-utils.mkdir = (path) => {
+MyUtils.mkdir = (path) => {
   path.split('/').reduce((curPath, folder) => {
     curPath += folder + '/';
     if (!fs.existsSync(curPath)) {
@@ -17,7 +17,7 @@ utils.mkdir = (path) => {
   }, '');
 }
 
-utils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
+MyUtils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
   let date = new Date(new Date() - 86400 * 1000);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, ss);
 }
@@ -26,7 +26,7 @@ utils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
  * Ouputs UTC
  * Note: time should be in UTC if type of time is 'number'
  */
-utils.addTime = (time, millisecs) => {
+MyUtils.addTime = (time, millisecs) => {
   if (typeof time === 'number') {
     return new Date(time + millisecs);
   } else {
@@ -36,7 +36,7 @@ utils.addTime = (time, millisecs) => {
 
 const regexDur = /^([1-9]|[1-5]\d|60|)(s|sec|secs|m|min|mins)$/i;
 
-utils.convDuration = (str) => {
+MyUtils.convDuration = (str) => {
   if (!regexDur.test(str)) return null;
 
   let match = regexDur.exec(str);
@@ -47,14 +47,14 @@ utils.convDuration = (str) => {
   }
 }
 
-utils.jsonToObject = (path) => {
+MyUtils.jsonToObject = (path) => {
   if (!fs.existsSync(path)) return null;
   return JSON.parse(fs.readFileSync(path));
 }
 
 const regexSampleRate = /^(1|0\.\d+)$/;
 
-utils.parseSampleRate = (str) => {
+MyUtils.parseSampleRate = (str) => {
   if (!regexSampleRate.test(str)) return null;
   return Number(str);
 }
@@ -65,7 +65,7 @@ const regexDate = /^\d{4}-\d{2}-\d{2}$/;
  * Expects HST and ouputs UTC
  * FIXME: Only works with HST; time diff should be dynamically assigned
  */
-utils.parseDate = (str, hh = 0, mm = 0, ss = 0) => {
+MyUtils.parseDate = (str, hh = 0, mm = 0, ss = 0) => {
   let timediff = 10;
   if (!regexDate.test(str)) return null;
   let ms = Date.parse(str);
@@ -81,80 +81,80 @@ utils.parseDate = (str, hh = 0, mm = 0, ss = 0) => {
  * YYYY-MM-DDThh:mm:ss  => HST
  * YYYY-MM-DDThh:mm:ssZ => UTC
  */
-utils.parseTime = (str) => {
+MyUtils.parseTime = (str) => {
   let ms = Date.parse(str);
   if (!ms) return null;
   return new Date(ms);
 }
 
-utils.dropMillisecs = (timeInMs) => {
+MyUtils.dropMillisecs = (timeInMs) => {
   return Math.floor(timeInMs / 1000) * 1000;
 }
 
-utils.getTimeXminAgoInMS = (min) => {
-  return utils.dropMillisecs(new Date() - min * 60 * 1000);
+MyUtils.getTimeXminAgoInMS = (min) => {
+  return MyUtils.dropMillisecs(new Date() - min * 60 * 1000);
 }
 
-utils.getTimeXminAgo = (min) => {
-  return new Date(utils.getTimeXminAgoInMS(min));
+MyUtils.getTimeXminAgo = (min) => {
+  return new Date(MyUtils.getTimeXminAgoInMS(min));
 }
 
-utils.toLocalDate = (time) => {
+MyUtils.toLocalDate = (time) => {
   return dateFormat(time, 'yyyy-mm-dd');
 }
 
-utils.toLocalDateTime = (time) => {
+MyUtils.toLocalDateTime = (time) => {
   return dateFormat(time, 'yyyy-mm-dd HH:MM');
 }
 
-utils.toLocalTime = (arg) => {
+MyUtils.toLocalTime = (arg) => {
   if (arg.hour || arg.hour == 0) {
-    return utils.toLocalDate(arg.date) + 'T' + arg.hour.toString().padStart(2, '0') + ':00';
+    return MyUtils.toLocalDate(arg.date) + 'T' + arg.hour.toString().padStart(2, '0') + ':00';
   } else {
-    return utils.toLocalDate(arg.date);
+    return MyUtils.toLocalDate(arg.date);
   }
 }
 
-utils.toLocalDateString = (time) => {
+MyUtils.toLocalDateString = (time) => {
   if (typeof time === 'number') time = new Date(time);
   return time.toLocalDateString();
 }
 
-utils.toLocalTimeString = (time) => {
+MyUtils.toLocalTimeString = (time) => {
   if (typeof time === 'number') time = new Date(time);
   return time.toLocalDateString() + 'T' + time.toLocalTimeString().replace(/:\d{2}$/, '');
 }
 
-utils.toISOStringWithoutMS = (time) => {
+MyUtils.toISOStringWithoutMS = (time) => {
   if (typeof time === 'number') time = new Date(time);
   return time.toISOString().replace(/\.\d{3}Z/, 'Z');
 }
 
-utils.flattenTime = (time) => {
+MyUtils.flattenTime = (time) => {
   if (typeof time === 'number') time = new Date(time);
   return time.toISOString().replace(/\.\d{3}Z/, '').replace(/[:\-T]/g,'');
 }
 
-utils.flattenDate = (time) => {
-  return utils.flattenTime(time).slice(0, 8);
+MyUtils.flattenDate = (time) => {
+  return MyUtils.flattenTime(time).slice(0, 8);
 }
 
-utils.flattenDateHour = (time) => {
-  return utils.flattenTime(time).slice(0, 10);
+MyUtils.flattenDateHour = (time) => {
+  return MyUtils.flattenTime(time).slice(0, 10);
 }
 
-utils.getLogFilePattern = (date, hour, prefix = 'log.') => {
-  let datehour = utils.flattenDateHour(date.getTime() + hour * 3600 * 1000);
+MyUtils.getLogFilePattern = (date, hour, prefix = 'log.') => {
+  let datehour = MyUtils.flattenDateHour(date.getTime() + hour * 3600 * 1000);
   return new RegExp(prefix + datehour); 
 }
 
-utils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
+MyUtils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
   let path = outdir;
   if (!path.endsWith('/')) path += '/';
   if (typeof date === 'string') {
     path += date;
   } else {
-    path += utils.flattenDate(date);
+    path += MyUtils.flattenDate(date);
   }
   return path;
 }
@@ -162,21 +162,21 @@ utils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
 /**
  * arg: { startTime, duration, outputDir }
  */
-utils.getLogFileName = (arg, prefix = 'log.') => {
-  let stime = utils.flattenTime(arg.startTime);
-  let etime = utils.flattenTime(arg.startTime.getTime() + arg.duration);
-  let path = utils.getLogFileDir(arg.startTime, arg.outputDir) + '/';
-  utils.mkdir(path);
+MyUtils.getLogFileName = (arg, prefix = 'log.') => {
+  let stime = MyUtils.flattenTime(arg.startTime);
+  let etime = MyUtils.flattenTime(arg.startTime.getTime() + arg.duration);
+  let path = MyUtils.getLogFileDir(arg.startTime, arg.outputDir) + '/';
+  MyUtils.mkdir(path);
   return path + prefix + stime + '-' + etime + '.json';
 }
 
-utils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
+MyUtils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
   let path = archiveDir;
   if (!path.endsWith('/')) path += '/';
   if (typeof date === 'string') {
     path += date;
   } else {
-    path += utils.flattenDate(date);
+    path += MyUtils.flattenDate(date);
   }
   return path;
 }
@@ -184,11 +184,11 @@ utils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
 /**
  * arg: { date, hour, archiveDir }
  */
-utils.getArchiveFileName = (arg) => {
-  let date = utils.addTime(arg.date, arg.hour * 3600 * 1000);
-  let path = utils.getArchiveDir(date, arg.archiveDir);
-  utils.mkdir(path);
-  return path + '/' + utils.flattenDateHour(date) + '.json.gz';
+MyUtils.getArchiveFileName = (arg) => {
+  let date = MyUtils.addTime(arg.date, arg.hour * 3600 * 1000);
+  let path = MyUtils.getArchiveDir(date, arg.archiveDir);
+  MyUtils.mkdir(path);
+  return path + '/' + MyUtils.flattenDateHour(date) + '.json.gz';
 }
 
-export default utils;
+export default MyUtils;

@@ -1,6 +1,6 @@
 
 import fs from 'fs';
-import utils from './utils.js';
+import MyUtils from './my-utils.js';
 import ArchiveManager from './archive-manager.js';
 
 function usage() {
@@ -16,7 +16,7 @@ function usage() {
 
 var opt = {
   env: 'development',
-  date: utils.parseDate('2018-06-06'),
+  date: MyUtils.parseDate('2018-06-06'),
   hour: 10
 };
 
@@ -31,7 +31,7 @@ while(args.length > 0) {
     opt.env = args.shift();
   } else if (arg === '--date') {
     opt.originalDate = args.shift();
-    opt.date = utils.parseDate(opt.originalDate);
+    opt.date = MyUtils.parseDate(opt.originalDate);
   } else if (arg === '--hour') {
     opt.originalHour = args.shift();
     opt.hour = parseInt(opt.originalHour);
@@ -61,7 +61,7 @@ if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
 }
 
 let confFile = './config/' + opt.env + '.json';
-const conf = utils.jsonToObject(confFile);
+const conf = MyUtils.jsonToObject(confFile);
 if (!conf) {
   console.log('Configuration File Not Found: ' + confFile);
   usage();

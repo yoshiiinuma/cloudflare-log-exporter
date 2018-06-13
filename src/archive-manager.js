@@ -5,7 +5,7 @@ import { PassThrough } from 'stream';
 
 import StreamConcat from 'stream-concat'
 import zlib from 'zlib';
-import utils from './utils.js';
+import MyUtils from './my-utils.js';
 import Log from './logging.js';
 
 let ArchiveManager = {}
@@ -39,8 +39,8 @@ const setupWriteStream = (fpath, resolve, reject) => {
  * arg: { date, hour, outputDir }
  */
 ArchiveManager.getHourlyLogFiles = (arg) => {
-  let dir = utils.getLogFileDir(arg.date, arg.outputDir);
-  let pattern = utils.getLogFilePattern(arg.date, arg.hour);
+  let dir = MyUtils.getLogFileDir(arg.date, arg.outputDir);
+  let pattern = MyUtils.getLogFilePattern(arg.date, arg.hour);
   let files = fs.readdirSync(dir).filter((f) => {
     return pattern.test(f);
   });
@@ -51,7 +51,7 @@ ArchiveManager.getHourlyLogFiles = (arg) => {
  * arg: { date, outputDir }
  */
 const getConcatHourlyLogStreams = (arg, resolve, reject) => {
-  let dir = utils.getLogFileDir(arg.date, arg.outputDir);
+  let dir = MyUtils.getLogFileDir(arg.date, arg.outputDir);
   let files = ArchiveManager.getHourlyLogFiles(arg)
   if (files.length == 0) return null;
 
@@ -72,8 +72,8 @@ const getConcatHourlyLogStreams = (arg, resolve, reject) => {
  */
 ArchiveManager.createHourlyArchive = (arg) => {
   return new Promise((resolve, reject) => {
-    let gzfile = utils.getArchiveFileName(arg);
-    let r = utils.toLocalTime(arg) + ' => ';
+    let gzfile = MyUtils.getArchiveFileName(arg);
+    let r = MyUtils.toLocalTime(arg) + ' => ';
     let success = () => { resolve(r + gzfile) }
     let gzip = setupGzip(resolve, reject);
     let outStream = setupWriteStream(gzfile, success, reject);
@@ -103,7 +103,7 @@ ArchiveManager.createDailyArchive = (arg) => {
  * arg: { date, hour, archiveDir }
  */
 ArchiveManager.viewHourlyArchive = (arg) => {
-  let gzfile = utils.getArchiveFileName(arg);
+  let gzfile = MyUtils.getArchiveFileName(arg);
   let gunzip = zlib.createGunzip();
   let instream = fs.createReadStream(gzfile)
     .on('error', (err) => { Log.error(err) });

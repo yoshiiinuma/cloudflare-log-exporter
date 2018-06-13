@@ -1,14 +1,14 @@
 
 import zlib from 'zlib';
 import request from 'request';
-import utils from './utils.js';
+import MyUtils from './my-utils.js';
 import Log from './logging.js';
 
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
 
 const generateLogApiUrl = (arg) => {
-  let stime = utils.toISOStringWithoutMS(arg.startTime);
-  let etime = utils.toISOStringWithoutMS(arg.startTime.getTime() + arg.duration);
+  let stime = MyUtils.toISOStringWithoutMS(arg.startTime);
+  let etime = MyUtils.toISOStringWithoutMS(arg.startTime.getTime() + arg.duration);
   let url = urlPrefix + '/zones/' + arg.zoneId + '/logs/received?start=' + stime + '&end=' + etime;
   if (arg.count) url = url + '&count=' + arg.count;
   if (arg.sample) url = url + '&sample=' + arg.sampleRate;
