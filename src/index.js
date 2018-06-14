@@ -1,13 +1,12 @@
 
 import fs from 'fs';
 import MyUtils from './my-utils.js';
-import Logger from './logger.js';
 import logClient from './log-client.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
 const WAIT_MINS = 15;
 
-function usage() {
+var usage = () => {
   console.log("\n Usage: npm run exec -- [OPTIONS]");
   console.log(" Usage: node dist/index.js [OPTIONS]");
   console.log("\n   OPTIONS");
@@ -29,6 +28,12 @@ var opt = {
 };
 
 var args = process.argv.slice(2);
+
+var exitProgram = (msg) => {
+  if (msg) console.log(msg);
+  usage();
+  process.exit();
+}
 
 while(args.length > 0) {
   let arg = args.shift();
@@ -60,57 +65,41 @@ while(args.length > 0) {
       opt.sampleRate = DEFAULT_SAMPLE_RATE;
     }
   } else {
-    console.log('Invalid Argument: ' + arg);
-    usage();
-    process.exit();
+    exitProgram('Invalid Argument: ' + arg);
   }
 }
 
 if (opt.env != 'development' && opt.env != 'production') {
-  console.log(" Invalid Environment: " + opt.env);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Environment: " + opt.env);
 }
 
 if (!opt.startTime) {
-  console.log(" Invalid Start Time: " + opt.originalStartTime);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Start Time: " + opt.originalStartTime);
 }
 
 if (!opt.duration) {
-  console.log(" Invalid Duration: " + opt.originalDuration);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Duration: " + opt.originalDuration);
 }
 
 let regexInt = /^\d+$/;
 
 if (opt.count) {
   if (!regexInt.test(opt.count)) {
-    console.log(" Invalid Count: " + opt.count);
-    usage();
-    process.exit();
+    exitProgram(" Invalid Count: " + opt.count);
   }
   opt.count = parseInt(opt.count);
 }
 
 if (opt.sample) {
   if (!opt.sampleRate) {
-    console.log(" Invalid Sample Rate: " + opt.origSampleRate);
-    usage();
-    process.exit();
+    exitProgram(" Invalid Sample Rate: " + opt.origSampleRate);
   }
 }
 
-const conf = MyUtils.loadConfig(opt);
-if (!conf) {
-  console.log('Configuration File Not Found: ' + MyUtils.config(opt));
-  usage();
-  process.exit();
+let arg = MyUtils.initApp(opt);
+if (!arg) {
+  exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
-
-let arg = Object.assign(conf, opt);
 
 if (arg.toFile) {
   if (!arg.outfile) arg.outfile = MyUtils.getLogFileName(arg);
@@ -118,8 +107,6 @@ if (arg.toFile) {
 } else {
   arg.output = process.stdout;
 }
-
-Logger.initialize(arg);
 
 logClient.get(arg)
   .pipe(arg.output);

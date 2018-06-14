@@ -1,6 +1,7 @@
 
 import fs from 'fs';
 import dateFormat from 'dateformat';
+import Logger from './logger.js';
 
 let MyUtils = {};
 
@@ -65,6 +66,18 @@ MyUtils.config = (arg) => {
 MyUtils.loadConfig = (arg) => {
   let confFile = MyUtils.config(arg);
   return MyUtils.jsonToObject(confFile);
+}
+
+/**
+ * arg: { env }
+ */
+MyUtils.initApp = (opt) => {
+  let conf = MyUtils.loadConfig(opt);
+  if (!conf) return null;
+  let arg = Object.assign(conf, opt);
+
+  Logger.initialize(arg);
+  return arg;
 }
 
 const regexSampleRate = /^(1|0\.\d+)$/;

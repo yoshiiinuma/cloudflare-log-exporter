@@ -3,7 +3,7 @@ import fs from 'fs';
 import MyUtils from './my-utils.js';
 import ArchiveManager from './archive-manager.js';
 
-function usage() {
+const usage = () => {
   console.log("\n Usage: npm run view -- [OPTIONS]");
   console.log(" Usage: node dist/view.js [OPTIONS]");
   console.log("\n   OPTIONS");
@@ -12,7 +12,7 @@ function usage() {
   console.log("     --hour:             0-23");
   console.log("     -h or --help:       show this message");
   console.log();
-}
+};
 
 var opt = {
   env: 'development',
@@ -21,6 +21,12 @@ var opt = {
 };
 
 var args = process.argv.slice(2);
+
+var exitProgram = (msg) => {
+  if (msg) console.log(msg);
+  usage();
+  process.exit();
+}
 
 while(args.length > 0) {
   let arg = args.shift();
@@ -43,31 +49,21 @@ while(args.length > 0) {
 }
 
 if (opt.env != 'development' && opt.env != 'production') {
-  console.log(" Invalid Environment: " + opt.env);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Environment: " + opt.env);
 }
 
 if (!opt.date) {
-  console.log(" Invalid Date: " + opt.originalDate);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Date: " + opt.originalDate);
 }
 
 if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
-  console.log(" Invalid Hour: " + opt.originalHour);
-  usage();
-  process.exit();
+  exitProgram(" Invalid Hour: " + opt.originalHour);
 }
 
-const conf = MyUtils.loadConfig(opt);
-if (!conf) {
-  console.log('Configuration File Not Found: ' + MyUtils.config(opt));
-  usage();
-  process.exit();
+let arg = MyUtils.initApp(opt);
+if (!arg) {
+  exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
-
-let arg = Object.assign(conf, opt);
 
 ArchiveManager.viewHourlyArchive(arg);
 
