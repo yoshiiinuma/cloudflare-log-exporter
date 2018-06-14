@@ -60,10 +60,10 @@ if (!opt.hour || opt.hour < 0 || opt.hour > 23) {
   exitProgram(" Invalid Hour: " + opt.originalHour);
 }
 
-let arg = MyUtils.initApp(opt);
-if (!arg) {
+let conf = MyUtils.initApp(opt);
+if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-ArchiveManager.viewHourlyArchive(arg);
+ArchiveManager.viewHourlyArchive(conf);
 

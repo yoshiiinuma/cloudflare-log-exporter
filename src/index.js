@@ -96,18 +96,17 @@ if (opt.sample) {
   }
 }
 
-let arg = MyUtils.initApp(opt);
-if (!arg) {
+let conf = MyUtils.initApp(opt);
+if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-if (arg.toFile) {
-  if (!arg.outfile) arg.outfile = MyUtils.getLogFileName(arg);
-  arg.output = fs.createWriteStream(arg.outfile);
-} else {
-  arg.output = process.stdout;
+let output = process.stdout;
+
+if (conf.toFile) {
+  if (!conf.outfile) conf.outfile = MyUtils.getLogFileName(conf);
+  output = fs.createWriteStream(conf.outfile);
 }
 
-logClient.get(arg)
-  .pipe(arg.output);
+logClient.get(conf).pipe(output);
 

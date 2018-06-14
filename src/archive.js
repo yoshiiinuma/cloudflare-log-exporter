@@ -61,17 +61,17 @@ if (opt.hour) {
   }
 }
 
-let arg = MyUtils.initApp(opt);
-if (!arg) {
+let conf = MyUtils.initApp(opt);
+if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-if (arg.hour) {
-  ArchiveManager.createHourlyArchive(arg)
+if (conf.hour) {
+  ArchiveManager.createHourlyArchive(conf)
     .then((msg) => console.log(msg))
     .catch((err) => Logger.error(err));
 } else {
-  ArchiveManager.createDailyArchive(arg)
+  ArchiveManager.createDailyArchive(conf)
     .then((results) => {
       results.map((msg) => console.log(msg))
     })
