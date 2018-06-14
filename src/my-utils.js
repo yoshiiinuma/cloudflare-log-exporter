@@ -68,6 +68,14 @@ MyUtils.loadConfig = (arg) => {
   return MyUtils.jsonToObject(confFile);
 }
 
+const setUncaughtExceptionHandler = () => {
+  process.on('uncaughtException', (err) => {
+    Logger.fatal('########################################################################');
+    Logger.fatal(err);
+    Logger.fatal('########################################################################');
+  });
+}
+
 /**
  * arg: { env }
  */
@@ -76,6 +84,7 @@ MyUtils.initApp = (opt) => {
   if (!conf) return null;
   let arg = Object.assign(conf, opt);
 
+  setUncaughtExceptionHandler();
   Logger.initialize(arg);
   return arg;
 }
