@@ -38,8 +38,7 @@ var exitProgram = (msg) => {
 while(args.length > 0) {
   let arg = args.shift();
   if (arg === '-h' || arg === '--help') {
-    usage();
-    process.exit();
+    exitProgram();
   } else if (arg === '-e' || arg === '--env') {
     opt.env = args.shift();
   } else if (arg === '-s' || arg === '--starttime') {

@@ -31,8 +31,7 @@ var exitProgram = (msg) => {
 while(args.length > 0) {
   let arg = args.shift();
   if (arg === '-h' || arg === '--help') {
-    usage();
-    process.exit();
+    exitProgram();
   } else if (arg === '-e' || arg === '--env') {
     opt.env = args.shift();
   } else if (arg === '--date') {
@@ -42,9 +41,7 @@ while(args.length > 0) {
     opt.originalHour = args.shift();
     opt.hour = parseInt(opt.originalHour);
   } else {
-    console.log('Invalid Argument: ' + arg);
-    usage();
-    process.exit();
+    exitProgram('Invalid Argument: ' + arg);
   }
 }
 
