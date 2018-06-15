@@ -1,10 +1,11 @@
 {
- "zoneId": "ZONE ID",
- "authEmail": "email@test.com",
- "authKey": "AUTH KEY",
- "outputDir": "./output",
- "archiveDir": "./archive",
- "enableLog": false,
- "logLevel": "error",
- "logDir": "./logs"
+  "esApiEndpoint": "http://localhost:9200/",
+  "zoneId": "ZONE ID",
+  "authEmail": "email@test.com",
+  "authKey": "AUTH KEY",
+  "outputDir": "./output",
+  "archiveDir": "./archive",
+  "enableLog": false,
+  "logLevel": "error",
+  "logDir": "./logs"
 }

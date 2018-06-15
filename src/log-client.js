@@ -6,16 +6,16 @@ import Logger from './logger.js';
 
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
 
-const fields => [
-    'timestamp', 'zoneId', 'ownerId', 'zoneName', 'rayId', 'securityLevel',
-    'client.ip', 'client.country', 'client.sslProtocol', 'client.sslCipher',
-    'client.deviceType', 'client.asNum', 'clientRequest.bytes',
-    'clientRequest.httpHost', 'clientRequest.httpMethod', 'clientRequest.uri',
-    'clientRequest.httpProtocol', 'clientRequest.userAgent', 'cache.cacheStatus',
-    'edge.cacheResponseTime', 'edge.startTimestamp', 'edge.endTimestamp',
-    'edgeResponse.status', 'edgeResponse.bytes', 'edgeResponse.bodyBytes',
-    'originResponse.status', 'origin.responseTime'
-  ]
+const fields = [
+  'timestamp', 'zoneId', 'ownerId', 'zoneName', 'rayId', 'securityLevel',
+  'client.ip', 'client.country', 'client.sslProtocol', 'client.sslCipher',
+  'client.deviceType', 'client.asNum', 'clientRequest.bytes',
+  'clientRequest.httpHost', 'clientRequest.httpMethod', 'clientRequest.uri',
+  'clientRequest.httpProtocol', 'clientRequest.userAgent', 'cache.cacheStatus',
+  'edge.cacheResponseTime', 'edge.startTimestamp', 'edge.endTimestamp',
+  'edgeResponse.status', 'edgeResponse.bytes', 'edgeResponse.bodyBytes',
+  'originResponse.status', 'origin.responseTime'
+];
 
 const generateLogApiUrl = (arg) => {
   let stime = MyUtils.toISOStringWithoutMS(arg.startTime);
