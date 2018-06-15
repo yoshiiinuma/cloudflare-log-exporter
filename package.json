@@ -8,6 +8,7 @@
     "exec": "babel-node src/index.js",
     "archive": "babel-node src/archive.js",
     "view": "babel-node src/view.js",
+    "search": "babel-node src/search.js",
     "build": "babel src --out-dir dist"
   },
   "repository": {
@@ -23,7 +24,8 @@
     "cloudflare",
     "api",
     "log",
-    "export"
+    "export",
+    "elasticsearch"
   ],
   "author": "Yoshiaki Iinuma",
   "license": "ISC",
@@ -36,6 +38,7 @@
     "dateformat": "^3.0.3",
     "fs": "0.0.1-security",
     "request": "^2.87.0",
+    "request-promise": "^4.2.2",
     "stream-concat": "^0.3.0",
     "zlib": "^1.0.5"
   }
