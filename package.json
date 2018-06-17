@@ -8,6 +8,7 @@
     "exec": "babel-node src/index.js",
     "archive": "babel-node src/archive.js",
     "view": "babel-node src/view.js",
+    "push": "babel-node src/push.js",
     "search": "babel-node src/search.js",
     "build": "babel src --out-dir dist"
   },
@@ -35,6 +36,7 @@
     "babel-preset-es2015": "^6.24.1"
   },
   "dependencies": {
+    "byline": "^5.0.0",
     "dateformat": "^3.0.3",
     "fs": "0.0.1-security",
     "request": "^2.87.0",

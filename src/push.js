@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import MyUtils from './my-utils.js';
-import ArchiveManager from './archive-manager.js';
+import PushManager from './push-manager.js';
 
 const usage = () => {
   console.log("\n Usage: npm run push -- [OPTIONS]");
@@ -62,5 +62,6 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
+PushManager.read({ file: './output/20180613/log.20180613190500-20180613190600.json' })
 //ArchiveManager.viewHourlyArchive(conf);
 
