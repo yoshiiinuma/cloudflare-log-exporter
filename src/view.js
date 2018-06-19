@@ -8,16 +8,16 @@ const usage = () => {
   console.log(" Usage: node dist/view.js [OPTIONS]");
   console.log("\n   OPTIONS");
   console.log("     -e or --env:        development|production default development");
-  console.log("     --date:             local time YYYY-MM-DD");
-  console.log("     --hour:             0-23");
+  console.log("     --date:             local time YYYY-MM-DD; default yesterday");
+  console.log("     --hour:             0-23; default 8");
   console.log("     -h or --help:       show this message");
   console.log();
 };
 
 var opt = {
   env: 'development',
-  date: MyUtils.parseDate('2018-06-06'),
-  hour: 10
+  date: MyUtils.getYesterday(),
+  hour: 8
 };
 
 var args = process.argv.slice(2);
