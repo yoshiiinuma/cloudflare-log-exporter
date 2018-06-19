@@ -106,12 +106,12 @@ MyUtils.parseSampleRate = (str) => {
 
 const regexDate = /^\d{4}-\d{2}-\d{2}$/;
 
+const timediff = new Date().getTimezoneOffset() / 60;
+
 /**
  * Expects HST and ouputs UTC
- * FIXME: Only works with HST; time diff should be dynamically assigned
  */
 MyUtils.parseDate = (str, hh = 0, mm = 0, ss = 0) => {
-  let timediff = 10;
   if (!regexDate.test(str)) return null;
   let ms = Date.parse(str);
   if (!ms) return null;
