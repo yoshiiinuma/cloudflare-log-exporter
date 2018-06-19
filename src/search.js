@@ -71,5 +71,6 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-EsClient.getHealth({});
+//EsClient.getIndices({});
+EsClient.getIndex({ 'index': 'test'});
 

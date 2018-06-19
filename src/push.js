@@ -62,6 +62,8 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-PushManager.read({ file: './output/20180613/log.20180613190500-20180613190600.json' })
+PushManager.push({ file: './output/20180615/log.20180615174601-20180615174701.json' });
+//PushManager.read({ file: './output/20180615/log.20180615174601-20180615174701.json' });
+//PushManager.read({ file: './output/20180613/log.20180613190500-20180613190600.json' });
 //ArchiveManager.viewHourlyArchive(conf);
 

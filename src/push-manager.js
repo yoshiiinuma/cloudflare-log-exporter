@@ -1,12 +1,14 @@
 
 import fs from 'fs';
 import path from 'path';
+import request from 'request';
 import { LineStream } from 'byline';
 
 import StreamConcat from 'stream-concat'
 import zlib from 'zlib';
 import MyUtils from './my-utils.js';
 import Logger from './logger.js';
+import BulkInsertConverter from './bulk-insert-converter.js';
 
 let PushManager = {}
 
@@ -106,11 +108,29 @@ PushManager.read = (arg) => {
   let instream = fs.createReadStream(arg.file)
     .on('error', (err) => { Logger.error(err) });
   let linestream = new LineStream()
-    .on('data', (l) => { console.log(l.toString());console.log('-----------------------------') })
     .on('error', (err) => { Logger.error(err) });
+  let converter = new BulkInsertConverter();
 
-  //instream.pipe(linestream).pipe(process.stdout);
-  instream.pipe(linestream);
+  instream.pipe(linestream).pipe(converter).pipe(process.stdout);
+}
+
+PushManager.push = (arg) => {
+  let url = 'http://localhost:9200/_bulk'
+  let instream = fs.createReadStream(arg.file)
+    .on('error', (err) => { Logger.error(err) });
+  let linestream = new LineStream()
+    .on('error', (err) => { Logger.error(err) });
+  let converter = new BulkInsertConverter();
+
+  instream.pipe(linestream).pipe(converter).pipe(request.post({ url, json: true })
+    .on('response', (res) => {
+      Logger.debug(res.statusCode);
+      Logger.debug(res.statusMessage);
+      Logger.debug(res.headers);
+    })
+    .on('error', (err) => Logger.error(err))
+  );
+  //instream.pipe(linestream).pipe(BulkInsertConverter).pipe(process.stdout);
 }
 
 export default PushManager;

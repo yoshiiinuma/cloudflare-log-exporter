@@ -1,5 +1,5 @@
-
 import request from 'request-promise';
+import util from 'util';
 import MyUtils from './my-utils.js';
 import Logger from './logger.js';
 
@@ -10,7 +10,7 @@ let EsClient = {};
 let endpoint = DEFAULT_ENDPOINT;
 
 let postProcess = (r) => {
-  console.log(r);
+  console.log(util.inspect(r, false, null));
   return r;
 };
 
@@ -51,8 +51,19 @@ EsClient.getNodes = (arg) => {
   return esGet(url);
 };
 
+EsClient.getTemplate = (arg) => {
+  let url = endpoint + '_template?pretty';
+  return esGet(url);
+};
+
 EsClient.getIndices = (arg) => {
   let url = endpoint + '_cat/indices?v';
+  return esGet(url);
+};
+
+EsClient.getIndex = (arg) => {
+  let url = endpoint + arg.index + '?pretty';
+  console.log(url);
   return esGet(url);
 };
 
