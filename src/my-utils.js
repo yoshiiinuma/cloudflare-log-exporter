@@ -8,14 +8,34 @@ let MyUtils = {};
 export const DEFAULT_OUTPUT_DIR = './output';
 export const DEFAULT_ARCHIVE_DIR = './archive';
 
-MyUtils.mkdir = (path) => {
-  path.split('/').reduce((curPath, folder) => {
+/**
+ * Recursively create directories
+ */
+MyUtils.mkdir = (fpath) => {
+  fpath.split('/').reduce((curPath, folder) => {
     curPath += folder + '/';
     if (!fs.existsSync(curPath)) {
       fs.mkdirSync(curPath);
     }
     return curPath;
   }, '');
+}
+
+/**
+ * Recursively delete directories
+ */
+MyUtils.rmdir = (dir) => {
+  if (fs.existsSync(dir)) {
+    fs.readdirSync(dir).forEach((file, index) => {
+      let curPath = dir + '/' + file;
+      if (fs.lstatSync(curPath).isDirectory()) {
+        MyUtils.rmdir(curPath);
+      } else {
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(dir);
+  }
 }
 
 MyUtils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
@@ -56,9 +76,9 @@ MyUtils.convDuration = (str) => {
   }
 }
 
-MyUtils.jsonToObject = (path) => {
-  if (!fs.existsSync(path)) return null;
-  return JSON.parse(fs.readFileSync(path));
+MyUtils.jsonToObject = (file) => {
+  if (!fs.existsSync(file)) return null;
+  return JSON.parse(fs.readFileSync(file));
 }
 
 /**
@@ -194,14 +214,14 @@ MyUtils.getLogFilePattern = (date, hour, prefix = 'log.') => {
 }
 
 MyUtils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
-  let path = outdir;
-  if (!path.endsWith('/')) path += '/';
+  let dir = outdir;
+  if (!dir.endsWith('/')) dir += '/';
   if (typeof date === 'string') {
-    path += date;
+    dir += date;
   } else {
-    path += MyUtils.flattenDate(date);
+    dir += MyUtils.flattenDate(date);
   }
-  return path;
+  return dir;
 }
 
 /**
@@ -210,20 +230,20 @@ MyUtils.getLogFileDir = (date, outdir = DEFAULT_OUTPUT_DIR) => {
 MyUtils.getLogFileName = (arg, prefix = 'log.') => {
   let stime = MyUtils.flattenTime(arg.startTime);
   let etime = MyUtils.flattenTime(arg.startTime.getTime() + arg.duration);
-  let path = MyUtils.getLogFileDir(arg.startTime, arg.outputDir) + '/';
-  MyUtils.mkdir(path);
-  return path + prefix + stime + '-' + etime + '.json';
+  let dir = MyUtils.getLogFileDir(arg.startTime, arg.outputDir) + '/';
+  MyUtils.mkdir(dir);
+  return dir + prefix + stime + '-' + etime + '.json';
 }
 
 MyUtils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
-  let path = archiveDir;
-  if (!path.endsWith('/')) path += '/';
+  let dir = archiveDir;
+  if (!dir.endsWith('/')) dir += '/';
   if (typeof date === 'string') {
-    path += date;
+    dir += date;
   } else {
-    path += MyUtils.flattenDate(date);
+    dir += MyUtils.flattenDate(date);
   }
-  return path;
+  return dir;
 }
 
 /**
@@ -231,9 +251,9 @@ MyUtils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
  */
 MyUtils.getArchiveFileName = (arg) => {
   let date = MyUtils.addTime(arg.date, arg.hour * 3600 * 1000);
-  let path = MyUtils.getArchiveDir(date, arg.archiveDir);
-  MyUtils.mkdir(path);
-  return path + '/' + MyUtils.flattenDateHour(date) + '.json.gz';
+  let dir = MyUtils.getArchiveDir(date, arg.archiveDir);
+  MyUtils.mkdir(dir);
+  return dir + '/' + MyUtils.flattenDateHour(date) + '.json.gz';
 }
 
 export default MyUtils;
