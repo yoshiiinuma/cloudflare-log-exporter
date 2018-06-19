@@ -66,12 +66,12 @@ if (!conf) {
 
 if (conf.hour) {
   ArchiveManager.createHourlyArchive(conf)
-    .then((msg) => console.log(msg))
+    .then((msg) => Logger.info(msg))
     .catch((err) => Logger.error(err));
 } else {
   ArchiveManager.createDailyArchive(conf)
     .then((results) => {
-      results.map((msg) => console.log(msg))
+      results.map((msg) => Logger.info(msg))
     })
     .catch((err) => Logger.error(err));
 }
