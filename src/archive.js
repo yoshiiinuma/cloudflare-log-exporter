@@ -9,7 +9,7 @@ const usage = () => {
   console.log(" Usage: node dist/archive.js [OPTIONS]");
   console.log("\n   OPTIONS");
   console.log("     -e or --env:        development|production default development");
-  console.log("     --date:             local time YYYY-MM-DD");
+  console.log("     --date:             local time YYYY-MM-DD; default two days ago");
   console.log("     --hour:             0-23");
   console.log("     -h or --help:       show this message");
   console.log();
@@ -17,6 +17,7 @@ const usage = () => {
 
 var opt = {
   env: 'development',
+  date: MyUtils.getTwoDaysAgo()
 };
 
 var args = process.argv.slice(2);
