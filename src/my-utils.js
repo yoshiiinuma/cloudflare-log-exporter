@@ -19,7 +19,15 @@ MyUtils.mkdir = (path) => {
 }
 
 MyUtils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
-  let date = new Date(new Date() - 86400 * 1000);
+  return MyUtils.getXDaysAgo(1, hh, mm, ss);
+}
+
+MyUtils.getTwoDaysAgo = (hh = 0, mm = 0, ss = 0) => {
+  return MyUtils.getXDaysAgo(2, hh, mm, ss);
+}
+
+MyUtils.getXDaysAgo = (x = 1, hh = 0, mm = 0, ss = 0) => {
+  let date = new Date(new Date() - x * 86400 * 1000);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, ss);
 }
 
