@@ -8,6 +8,7 @@
     "exec": "babel-node src/index.js",
     "archive": "babel-node src/archive.js",
     "view": "babel-node src/view.js",
+    "delete": "babel-node src/delete.js",
     "push": "babel-node src/push.js",
     "search": "babel-node src/search.js",
     "build": "babel src --out-dir dist"
