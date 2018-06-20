@@ -25,9 +25,8 @@ const fields = [
     "ClientASN", "ClientCountry", "ClientDeviceType", "ClientIP",
     "ClientRequestHost", "ClientRequestMethod", "ClientRequestProtocol",
     "ClientRequestReferer", "ClientRequestURI", "ClientRequestUserAgent",
-    "EdgeEndTimestamp", "EdgeRequestHost", "EdgeResponseBytes",
-    "EdgeResponseContentType", "EdgeResponseStatus", "EdgeStartTimestamp",
-    "RayID"];
+    "EdgeStartTimestamp", "EdgeEndTimestamp", "EdgeResponseBytes",
+    "EdgeResponseContentType", "EdgeResponseStatus", "RayID"];
 
 const generateLogApiUrl = (arg) => {
   let stime = MyUtils.toISOStringWithoutMS(arg.startTime);
