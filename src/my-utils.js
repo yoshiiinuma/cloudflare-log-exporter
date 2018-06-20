@@ -9,76 +9,16 @@ export const DEFAULT_OUTPUT_DIR = './output';
 export const DEFAULT_ARCHIVE_DIR = './archive';
 
 /**
- * Recursively create directories
+ * arg: { env }
  */
-MyUtils.mkdir = (fpath) => {
-  fpath.split('/').reduce((curPath, folder) => {
-    curPath += folder + '/';
-    if (!fs.existsSync(curPath)) {
-      fs.mkdirSync(curPath);
-    }
-    return curPath;
-  }, '');
-}
+MyUtils.initApp = (opt) => {
+  let conf = MyUtils.loadConfig(opt);
+  if (!conf) return null;
+  let arg = Object.assign(conf, opt);
 
-/**
- * Recursively delete directories
- */
-MyUtils.rmdir = (dir) => {
-  if (fs.existsSync(dir)) {
-    fs.readdirSync(dir).forEach((file, index) => {
-      let curPath = dir + '/' + file;
-      if (fs.lstatSync(curPath).isDirectory()) {
-        MyUtils.rmdir(curPath);
-      } else {
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(dir);
-  }
-}
-
-MyUtils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
-  return MyUtils.getXDaysAgo(1, hh, mm, ss);
-}
-
-MyUtils.getTwoDaysAgo = (hh = 0, mm = 0, ss = 0) => {
-  return MyUtils.getXDaysAgo(2, hh, mm, ss);
-}
-
-MyUtils.getXDaysAgo = (x = 1, hh = 0, mm = 0, ss = 0) => {
-  let date = new Date(new Date() - x * 86400 * 1000);
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, ss);
-}
-
-/**
- * Ouputs UTC
- * Note: time should be in UTC if type of time is 'number'
- */
-MyUtils.addTime = (time, millisecs) => {
-  if (typeof time === 'number') {
-    return new Date(time + millisecs);
-  } else {
-    return new Date(time.getTime() + millisecs);
-  }
-}
-
-const regexDur = /^([1-9]|[1-5]\d|60|)(s|sec|secs|m|min|mins)$/i;
-
-MyUtils.convDuration = (str) => {
-  if (!regexDur.test(str)) return null;
-
-  let match = regexDur.exec(str);
-  if (match[2].startsWith('m')) {
-    return parseInt(match[1]) * 60 * 1000;
-  } else {
-    return parseInt(match[1]) * 1000;
-  }
-}
-
-MyUtils.jsonToObject = (file) => {
-  if (!fs.existsSync(file)) return null;
-  return JSON.parse(fs.readFileSync(file));
+  setUncaughtExceptionHandler();
+  Logger.initialize(arg);
+  return arg;
 }
 
 /**
@@ -96,6 +36,11 @@ MyUtils.loadConfig = (arg) => {
   return MyUtils.jsonToObject(confFile);
 }
 
+MyUtils.jsonToObject = (file) => {
+  if (!fs.existsSync(file)) return null;
+  return JSON.parse(fs.readFileSync(file));
+}
+
 const setUncaughtExceptionHandler = () => {
   process.on('uncaughtException', (err) => {
     Logger.fatal('########################################################################');
@@ -105,16 +50,46 @@ const setUncaughtExceptionHandler = () => {
 }
 
 /**
- * arg: { env }
+ * Recursively creates directories
  */
-MyUtils.initApp = (opt) => {
-  let conf = MyUtils.loadConfig(opt);
-  if (!conf) return null;
-  let arg = Object.assign(conf, opt);
+MyUtils.mkdir = (fpath) => {
+  fpath.split('/').reduce((curPath, folder) => {
+    curPath += folder + '/';
+    if (!fs.existsSync(curPath)) {
+      fs.mkdirSync(curPath);
+    }
+    return curPath;
+  }, '');
+}
 
-  setUncaughtExceptionHandler();
-  Logger.initialize(arg);
-  return arg;
+/**
+ * Recursively deletes directories
+ */
+MyUtils.rmdir = (dir) => {
+  if (fs.existsSync(dir)) {
+    fs.readdirSync(dir).forEach((file, index) => {
+      let curPath = dir + '/' + file;
+      if (fs.lstatSync(curPath).isDirectory()) {
+        MyUtils.rmdir(curPath);
+      } else {
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(dir);
+  }
+}
+
+const regexDur = /^([1-9]|[1-5]\d|60|)(s|sec|secs|m|min|mins)$/i;
+
+MyUtils.convDuration = (str) => {
+  if (!regexDur.test(str)) return null;
+
+  let match = regexDur.exec(str);
+  if (match[2].startsWith('m')) {
+    return parseInt(match[1]) * 60 * 1000;
+  } else {
+    return parseInt(match[1]) * 1000;
+  }
 }
 
 const regexSampleRate = /^(1|0\.\d+)$/;
@@ -152,16 +127,41 @@ MyUtils.parseTime = (str) => {
   return new Date(ms);
 }
 
-MyUtils.dropMillisecs = (timeInMs) => {
-  return Math.floor(timeInMs / 1000) * 1000;
+MyUtils.getYesterday = (hh = 0, mm = 0, ss = 0) => {
+  return MyUtils.getXDaysAgo(1, hh, mm, ss);
 }
 
-MyUtils.getTimeXminAgoInMS = (min) => {
-  return MyUtils.dropMillisecs(new Date() - min * 60 * 1000);
+MyUtils.getTwoDaysAgo = (hh = 0, mm = 0, ss = 0) => {
+  return MyUtils.getXDaysAgo(2, hh, mm, ss);
 }
 
+MyUtils.getXDaysAgo = (x = 1, hh = 0, mm = 0, ss = 0) => {
+  let date = new Date(new Date() - x * 86400 * 1000);
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, ss);
+}
+
+/**
+ * Ouputs UTC
+ * Note: time should be in UTC if type of time is 'number'
+ */
+MyUtils.addTime = (time, millisecs) => {
+  if (typeof time === 'number') {
+    return new Date(time + millisecs);
+  } else {
+    return new Date(time.getTime() + millisecs);
+  }
+}
+
+/**
+ * Returns time x minutes before now, truncating seconds and milliseconds
+ *
+ */
 MyUtils.getTimeXminAgo = (min) => {
-  return new Date(MyUtils.getTimeXminAgoInMS(min));
+  let date = new Date();
+  date.setMilliseconds(0);
+  date.setSeconds(0);
+  date.setMinutes(date.getMinutes() - min);
+  return date;
 }
 
 MyUtils.toLocalDate = (time) => {
