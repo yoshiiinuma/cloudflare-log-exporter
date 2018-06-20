@@ -4,6 +4,7 @@ import request from 'request';
 import { LineStream } from 'byline';
 
 import BulkInsertConverter from './bulk-insert-converter.js';
+import Logger from './logger.js';
 
 let PushManager = {}
 
