@@ -11,22 +11,25 @@ const usage = () => {
   console.log("     -e or --env:        development|production default development");
   console.log("     --date:             local time YYYY-MM-DD; default two days ago");
   console.log("     --hour:             0-23");
+  console.log("     --delete:           deletes source log files after archiving");
   console.log("     -h or --help:       show this message");
   console.log();
 };
 
-var opt = {
+let opt = {
   env: 'development',
   date: MyUtils.getTwoDaysAgo()
 };
 
-var args = process.argv.slice(2);
+let args = process.argv.slice(2);
 
-var exitProgram = (msg) => {
+let exitProgram = (msg) => {
   if (msg) console.log(msg);
   usage();
   process.exit();
 }
+
+let needDelete = false;
 
 while(args.length > 0) {
   let arg = args.shift();
@@ -40,6 +43,8 @@ while(args.length > 0) {
   } else if (arg === '--hour') {
     opt.originalHour = args.shift();
     opt.hour = parseInt(opt.originalHour);
+  } else if (arg === '--delete') {
+    needDelete = true;
   } else {
     exitProgram('Invalid Argument: ' + arg);
   }
@@ -64,6 +69,16 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
+const deleteDir = (arg) => {
+  let dir = MyUtils.getLogFileDir(arg.date, arg.outputDir);
+
+  if (!dir || !fs.existsSync(dir)) {
+    Logger.error(" Directory Not Found: " + dir);
+  }
+  MyUtils.rmdir(dir);
+  Logger.info('DELETED ' + dir);
+}
+
 if (conf.hour) {
   ArchiveManager.createHourlyArchive(conf)
     .then((msg) => Logger.info(msg))
@@ -71,7 +86,13 @@ if (conf.hour) {
 } else {
   ArchiveManager.createDailyArchive(conf)
     .then((results) => {
-      results.map((msg) => Logger.info(msg))
+      results.map((msg) => Logger.info(msg));
+      return;
+    })
+    .then(() => {
+      if (needDelete) {
+        deleteDir(conf);
+      }
     })
     .catch((err) => Logger.error(err));
 }
