@@ -4,13 +4,14 @@ import MyUtils from './my-utils.js';
 import Logger from './logger.js';
 
 const DEFAULT_ENDPOINT = 'http://localhost:9200/';
+const DEFAULT_INDEX_MAX_AGE = '10d';
 
 let EsClient = {};
 
 let endpoint = DEFAULT_ENDPOINT;
-let tempType = '_doc';
-let pretty = '?pretty';
-let v = '?v';
+const tempType = '_doc';
+const pretty = '?pretty';
+const v = '?v';
 
 let postProcess = (r) => {
   console.log(util.inspect(r, false, null));
@@ -72,9 +73,11 @@ EsClient.getIndex = (arg) => {
   return esGet(url);
 };
 
+//FIXME Do NOT use the hard-coded file name
 EsClient.putIndex = (arg) => {
   let url = endpoint + arg.index + pretty;
-  return esPut(url);
+  let data = MyUtils.jsonToObject('./config/index.json');
+  return esPut(url, data);
 }
 
 EsClient.deleteIndex = (arg) => {
@@ -87,9 +90,11 @@ EsClient.getMapping = (arg) => {
   return esGet(url);
 }
 
+//FIXME Do NOT use the hard-coded file name
 EsClient.putMapping = (arg) => {
   let url = endpoint + arg.index + '/_mapping/' + tempType;
-  return esPut(url, mapping);
+  let data = MyUtils.jsonToObject('./config/mapping.json');
+  return esPut(url, data);
 }
 
 EsClient.putLog = (arg) => {
@@ -107,44 +112,49 @@ EsClient.bulkInsert = (arg) => {
   return esPost(url);
 };
 
+EsClient.getTemplate = (arg) => {
+  let url = endpoint + '_template/' + arg.index + pretty;
+  return esGet(url);
+};
 
-const mapping =
-  { properties:
-    { '@timestamp': { type: 'date' },
-      ClientASN: { type: 'integer' },
-      ClientCountry:
-       { type: 'keyword', ignore_above: 2 },
-      ClientDeviceType:
-       { type: 'keyword', ignore_above: 16 },
-      ClientIP: { type: 'ip' },
-      ClientRequestHost:
-       { type: 'keyword', ignore_above: 256 },
-      ClientRequestMethod:
-       { type: 'keyword', ignore_above: 8 },
-      ClientRequestProtocol:
-       { type: 'keyword', ignore_above: 16 },
-      ClientRequestReferer:
-       { type: 'text',
-         fields: { keyword: { type: 'keyword', ignore_above: 256 } } },
-      ClientRequestURI:
-       { type: 'text',
-         fields: { keyword: { type: 'keyword', ignore_above: 256 } } },
-      ClientRequestUserAgent:
-       { type: 'text',
-         fields: { keyword: { type: 'keyword', ignore_above: 256 } } },
-      EdgeEndTimestamp: { type: 'long' },
-      EdgeResponseBytes: { type: 'integer' },
-      EdgeResponseContentType:
-       { type: 'text',
-         fields: { keyword: { type: 'keyword', ignore_above: 64 } } },
-      EdgeResponseStatus: { type: 'keyword', ignore_above: 3 },
-      EdgeStartTimestamp: { type: 'long' },
-      RayID:
-       { type: 'text',
-         fields: { keyword: { type: 'keyword', ignore_above: 40 } }
-       }
+//FIXME Do NOT use the hard-coded file name
+EsClient.putTemplate = (arg) => {
+  let url = endpoint + '_template/' + arg.index + pretty;
+  let data = MyUtils.jsonToObject('./config/template.json');
+  return esPost(url, data);
+};
+
+EsClient.rollover = (arg) => {
+  let url = endpoint + arg.index + '/_rollover';
+  let maxAge = arg.maxAge || DEFAULT_INDEX_MAX_AGE;
+  let cond = { conditions: {} };
+
+  if (maxAge) {
+    cond.conditions.max_age = maxAge;
+  }
+  if (arg.maxDocs) {
+    cond.conditions.max_docs = arg.maxDocs;
+  }
+  if (arg.maxSize) {
+    cond.conditions.max_size = arg.maxSize;
+  }
+  return esPost(url, cond);
+};
+
+const tempTemplate = {
+  "template": "cflogs-*",
+  "settings": {
+    "index": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1,
+      "routing.allocation.include.box_type": "hot",
+      "routing.allocation.total_shards_per_node": 1
     }
-  };
+  },
+  "aliases": {
+    "all-cflogs": {}
+  }
+};
 
 export default EsClient;
 

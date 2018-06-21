@@ -1,5 +1,8 @@
 {
   "esApiEndpoint": "http://localhost:9200/",
+  "esIndexNameCurrent": "cflogs",
+  "esIndexNameAll": "all-cflogs",
+  "esIndexMaxAge": "30d",
   "zoneId": "ZONE ID",
   "authEmail": "email@test.com",
   "authKey": "AUTH KEY",

@@ -16,18 +16,19 @@ PushManager.read = (arg) => {
     .on('error', (err) => { Logger.error(err) });
   let linestream = new LineStream()
     .on('error', (err) => { Logger.error(err) });
-  let converter = new BulkInsertConverter();
+  let converter = new BulkInsertConverter(arg.index);
 
   instream.pipe(linestream).pipe(converter).pipe(process.stdout);
 }
 
+//FIXME use config endpoint
 PushManager.push = (arg) => {
   let url = 'http://localhost:9200/_bulk'
   let instream = fs.createReadStream(arg.file)
     .on('error', (err) => { Logger.error(err) });
   let linestream = new LineStream()
     .on('error', (err) => { Logger.error(err) });
-  let converter = new BulkInsertConverter();
+  let converter = new BulkInsertConverter(arg.index);
 
   instream.pipe(linestream).pipe(converter).pipe(request.post({ url, json: true })
     .on('response', (res) => {

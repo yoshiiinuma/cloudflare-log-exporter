@@ -15,8 +15,9 @@ const usage = () => {
   console.log("     create-index <INDEX>:            Creates the index");
   console.log("     delete-index <INDEX>:            Deletes the index");
   console.log("     create-mapping <INDEX>:          Uploads mapping definition for the index");
+  console.log("     create-template <INDEX>:         Creates a template for the index");
   console.log("     show-mapping <INDEX>:            Shows mapping definition for the index");
-  console.log("     rotate-index <INDEX>:            Rotates the index");
+  console.log("     rollover-index <INDEX>:          Rolls an index alias over to a new index");
   console.log();
   console.log("   OPTIONS");
   console.log("     -e or --env:        {development|production}; default development");
@@ -36,6 +37,11 @@ var exitProgram = (msg) => {
   process.exit();
 }
 
+const INDEX_COMMANDS = [
+  'show-indices', 'show-index', 'create-index', 'delete-index',
+  'create-mapping', 'show-mapping', 'create-template',
+  'rollover-index'];
+
 let command = null;
 let params = [];
 
@@ -48,7 +54,11 @@ while(args.length > 0) {
   } else if (arg === 'health' || arg === 'show-indices') {
     command = arg;
   } else if (arg === 'create-index' || arg === 'show-index' || arg === 'delete-index'  ||
-      arg === 'rotate-index' || arg === 'create-mapping' || arg === 'show-mapping') {
+      arg === 'rollover-index' || arg === 'show-mapping' || arg === 'show-template') {
+    command = arg;
+    opt.index = args.shift();
+    params.push(opt.index);
+  } else if (arg === 'create-mapping' || arg === 'create-template') {
     command = arg;
     opt.index = args.shift();
     params.push(opt.index);
@@ -67,22 +77,34 @@ if (!conf) {
 }
 
 if (command === 'health') {
-  EsClient.getHealth(conf)
+  EsClient.getHealth(conf);
 } else if (command === 'show-indices') {
-  EsClient.getIndices(conf)
+  EsClient.getIndices(conf);
 } else if (command === 'show-index') {
-  EsClient.getIndex(conf)
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.getIndex(conf);
 } else if (command === 'create-index') {
-  EsClient.putIndex(conf)
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.putIndex(conf);
 } else if (command === 'delete-index') {
-  EsClient.deleteIndex(conf)
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.deleteIndex(conf);
 } else if (command === 'create-mapping') {
-  EsClient.putMapping(conf)
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.putMapping(conf);
 } else if (command === 'show-mapping') {
-  EsClient.getMapping(conf)
-} else if (command === 'rotate-index') {
-  exitProgram('Not Supported Yet: ' + command)
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.getMapping(conf);
+} else if (command === 'create-template') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.putTemplate(conf);
+} else if (command === 'show-template') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.getTemplate(conf);
+} else if (command === 'rollover-index') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.rollover(conf);
 } else {
-  exitProgram('Invalid Command: ' + command + ' ' + params.join(' '))
+  exitProgram('Invalid Command: ' + command + ' ' + params.join(' '));
 }
 

@@ -1,7 +1,7 @@
 
 import { Transform } from 'stream'
 
-const DEFAULT_INDEX = 'test';
+const DEFAULT_INDEX = 'cflogs';
 
 class BulkInsertConverter extends Transform {
   constructor(index = DEFAULT_INDEX, options = {}) {
