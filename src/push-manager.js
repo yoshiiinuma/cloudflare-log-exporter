@@ -51,11 +51,16 @@ PushManager.push = (arg) => {
 
   instream.pipe(linestream).pipe(converter).pipe(request.post({ url, json: true })
     .on('response', (res) => {
-      Logger.debug(res.statusCode);
-      Logger.debug(res.statusMessage);
-      Logger.debug(res.headers);
+      if (res.statusCode === 200) {
+        Logger.info('PushManager#push: ' + arg.file + ' ' + res.statusCode + ' ' + res.statusMessage);
+      } else {
+        Logger.error('PushManager#push: ' + arg.file + ' ' + res.statusCode + ' ' + res.statusMessage);
+      }
     })
-    .on('error', (err) => Logger.error(err))
+    .on('error', (err) => {
+        Logger.error('PushManager#push: ' + arg.file);
+      Logger.error(err)
+    })
   );
   //instream.pipe(linestream).pipe(BulkInsertConverter).pipe(process.stdout);
 }
