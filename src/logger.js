@@ -37,7 +37,6 @@ const logFormat = (label, msg) => {
 
 const writeToStdout = (label, msg) => {
   process.stdout.write(logFormat(label, msg));
-  //console.log(logFormat(label, msg));
 };
 
 const appendToFile = (label, msg) => {
@@ -49,12 +48,10 @@ const appendToFile = (label, msg) => {
 let append = writeToStdout;
 
 const switchToStdout = () => { 
-  console.log('Switch To STDOUT');
   append = writeToStdout;
 }
 
 const switchToFile = () => {
-  console.log('Switch To File: ' + logFile);
   append = appendToFile;
 }
 
