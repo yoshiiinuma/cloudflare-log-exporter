@@ -1,5 +1,5 @@
 {
-  "template": "cflogs-*",
+  "index_patterns": ["cflogs-*"],
   "settings": {
     "index": {
       "number_of_shards": 5,
@@ -8,5 +8,44 @@
   },
   "aliases": {
     "all-cflogs": {}
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "ClientASN": { "type": "integer" },
+        "ClientCountry": {
+          "type": "keyword", "ignore_above": 2 },
+        "ClientDeviceType": {
+          "type": "keyword", "ignore_above": 16 },
+        "ClientIP": { "type": "ip" },
+        "ClientRequestHost": {
+          "type": "keyword", "ignore_above": 256 },
+        "ClientRequestMethod": {
+          "type": "keyword", "ignore_above": 8 },
+        "ClientRequestProtocol": {
+          "type": "keyword", "ignore_above": 16 },
+        "ClientRequestReferer": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+        "ClientRequestURI": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+        "ClientRequestUserAgent": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+        "EdgeEndTimestamp": { "type": "long" },
+        "EdgeResponseBytes": { "type": "integer" },
+        "EdgeResponseContentType": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 64 } } },
+        "EdgeResponseStatus": { "type": "keyword", "ignore_above": 3 },
+        "EdgeStartTimestamp": { "type": "long" },
+        "RayID": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 40 } }
+        }
+      }
+    }
   }
 }
