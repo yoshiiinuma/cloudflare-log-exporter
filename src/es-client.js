@@ -6,7 +6,7 @@ import MyUtils from './my-utils.js';
 import Logger from './logger.js';
 
 const DEFAULT_ENDPOINT = 'http://localhost:9200/';
-const DEFAULT_INDEX_MAX_AGE = '10d';
+const DEFAULT_INDEX_MAX_AGE = '30d';
 
 let EsClient = {};
 
@@ -148,7 +148,7 @@ EsClient.putTemplate = (arg) => {
 
 EsClient.rollover = (arg) => {
   let url = endpoint(arg) + arg.index + '/_rollover';
-  let maxAge = arg.maxAge || DEFAULT_INDEX_MAX_AGE;
+  let maxAge = arg.esIndexMaxAge || DEFAULT_INDEX_MAX_AGE;
   let cond = { conditions: {} };
 
   if (maxAge) {
