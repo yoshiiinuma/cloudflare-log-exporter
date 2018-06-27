@@ -7,8 +7,8 @@ const DEFAULT_SAMPLE_RATE = 0.01;
 const WAIT_MINS = 15;
 
 var usage = () => {
-  console.log("\n Usage: npm run exec -- [OPTIONS]");
-  console.log(" Usage: node dist/index.js [OPTIONS]");
+  console.log("\n Usage: npm run pull -- [OPTIONS]");
+  console.log(" Usage: node dist/pull.js [OPTIONS]");
   console.log("\n   OPTIONS");
   console.log("     -e or --env:        development|production default development");
   console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default " + WAIT_MINS + " minutes before now");

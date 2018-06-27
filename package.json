@@ -2,10 +2,10 @@
   "name": "cloudflare-log-exporter",
   "version": "1.0.0",
   "description": "Export access log from Cloudflare through the API.",
-  "main": "index.js",
+  "main": "pull.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "exec": "babel-node src/index.js",
+    "pull": "babel-node src/pull.js",
     "manage": "babel-node src/es-manager.js",
     "archive": "babel-node src/archive.js",
     "view": "babel-node src/view.js",
