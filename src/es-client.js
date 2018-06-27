@@ -19,7 +19,7 @@ const endpoint = (arg) => {
 };
 
 let postProcess = (r) => {
-  console.log(util.inspect(r, false, null));
+  Logger.debug(util.inspect(r, false, null));
   return r;
 };
 
