@@ -52,6 +52,7 @@ logClient.get = (arg) => {
       'X-Auth-Email': arg.authEmail
     }
   }).on('error', (err) => {
+    Logger.error('LogClient#get');
     Logger.error(err);
   });
 };
@@ -68,6 +69,7 @@ logClient.fields = (arg) => {
       'X-Auth-Email': arg.authEmail
     }
   }).on('error', (err) => {
+    Logger.error('LogClient#fields');
     Logger.error(err);
   });
 }
