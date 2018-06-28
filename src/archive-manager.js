@@ -15,6 +15,7 @@ const setupGzip = (resolve, reject) => {
     .on('finish', () => { Logger.debug('gzip finish') })
     .on('close', () => { Logger.debug('gzip close') })
     .on('error', (err) => {
+      Logger.error('ArciveManager#setupGzip');
       Logger.error(err);
       reject(err);
     });
@@ -29,6 +30,7 @@ const setupWriteStream = (fpath, resolve, reject) => {
       resolve();
     })
     .on('error', (err) => {
+      Logger.error('ArciveManager#setupWriteStream');
       Logger.error(err);
       reject(err);
     });
@@ -108,9 +110,15 @@ ArchiveManager.createDailyArchive = (arg) => {
 ArchiveManager.viewHourlyArchive = (arg) => {
   let gzfile = MyUtils.getArchiveFileName(arg);
   let gunzip = zlib.createGunzip()
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('ArchiveManager#viewHourlyArchive gunzip')
+      Logger.error(err)
+    });
   let instream = fs.createReadStream(gzfile)
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('ArchiveManager#viewHourlyArchive instream')
+      Logger.error(err)
+    });
   instream.pipe(gunzip).pipe(process.stdout);
 }
 
