@@ -25,7 +25,7 @@ var opt = {
 var args = process.argv.slice(2);
 
 var exitProgram = (msg) => {
-  if (msg) console.log(msg);
+  if (msg) console.log('PUSH.JS ' + msg);
   usage();
   process.exit();
 }
@@ -61,6 +61,5 @@ if (!conf) {
 
 conf.file = MyUtils.getLogFileName(conf);
 
-//PushManager.push({ index: 'cflogs', file: './output/20180620/log.20180620012002-20180620012102.json' });
 PushManager.push(conf);
 
