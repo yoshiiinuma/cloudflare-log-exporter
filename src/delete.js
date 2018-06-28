@@ -26,7 +26,7 @@ var opt = {
 var args = process.argv.slice(2);
 
 var exitProgram = (msg) => {
-  if (msg) console.log(msg);
+  if (msg) console.log('DELETE.JS ' + msg);
   usage();
   process.exit();
 }
@@ -94,5 +94,5 @@ if (!dir || !fs.existsSync(dir)) {
 }
 
 MyUtils.rmdir(dir);
-Logger.info('DELETED ' + dir);
+Logger.info('DELETE.JS DELETED ' + dir);
 
