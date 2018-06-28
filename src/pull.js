@@ -30,7 +30,7 @@ var opt = {
 var args = process.argv.slice(2);
 
 var exitProgram = (msg) => {
-  if (msg) console.log(msg);
+  if (msg) console.log('PULL.JS ' + msg);
   usage();
   process.exit();
 }
