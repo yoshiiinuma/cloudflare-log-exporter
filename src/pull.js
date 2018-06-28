@@ -2,6 +2,7 @@
 import fs from 'fs';
 import MyUtils from './my-utils.js';
 import logClient from './log-client.js';
+import Logger from './logger.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
 const WAIT_MINS = 15;
