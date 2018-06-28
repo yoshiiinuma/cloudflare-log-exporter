@@ -106,11 +106,11 @@ if (conf.toFile) {
   if (!conf.outfile) conf.outfile = MyUtils.getLogFileName(conf);
   output = fs.createWriteStream(conf.outfile);
   output.on('error', (err) => {
-    Loggeer.error('PULL.JS WRITESTREAM');
-    Loggeer.error(err);
+    Logger.error('PULL.JS WRITESTREAM');
+    Logger.error(err);
   });
   output.on('close', () => {
-    Loggeer.info('PULL.JS DONE ' + conf.outfile);
+    Logger.info('PULL.JS DONE ' + conf.outfile);
   });
 }
 
