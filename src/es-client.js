@@ -19,6 +19,7 @@ const endpoint = (arg) => {
 };
 
 let postProcess = (r) => {
+  Logger.debug('EsClient#postProcess')
   Logger.debug(util.inspect(r, false, null));
   return r;
 };
@@ -26,28 +27,40 @@ let postProcess = (r) => {
 const esGet = (url, data) => {
   return request({ url, json: true, })
     .then(postProcess)
-    .catch((err) => { Logger.error(err); });
+    .catch((err) => {
+      Logger.error('EsClient#esGet ' + url);
+      Logger.error(err);
+    });
 }
 
 const esPost = (url, data) => {
   let method = 'POST';
   return request({ url, method, json: true, body: data })
     .then(postProcess)
-    .catch((err) => { Logger.error(err); });
+    .catch((err) => {
+      Logger.error('EsClient#esPost ' + url);
+      Logger.error(err);
+    });
 }
 
 const esPut = (url, data) => {
   let method = 'PUT';
   return request({ url, method, json: true, body: data })
     .then(postProcess)
-    .catch((err) => { Logger.error(err); });
+    .catch((err) => {
+      Logger.error('EsClient#esPut ' + url);
+      Logger.error(err);
+    });
 }
 
 const esDel = (url) => {
   let method = 'DELETE';
   return request({ url, method, json: true })
     .then(postProcess)
-    .catch((err) => { Logger.error(err); });
+    .catch((err) => {
+      Logger.error('EsClient#esDel ' + url);
+      Logger.error(err);
+    });
 }
 
 EsClient.getHealth = (arg) => {
