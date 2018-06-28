@@ -105,6 +105,13 @@ let output = process.stdout;
 if (conf.toFile) {
   if (!conf.outfile) conf.outfile = MyUtils.getLogFileName(conf);
   output = fs.createWriteStream(conf.outfile);
+  output.on('error', (err) => {
+    Loggeer.error('PULL.JS WRITESTREAM');
+    Loggeer.error(err);
+  });
+  output.on('close', () => {
+    Loggeer.info('PULL.JS DONE ' + conf.outfile);
+  });
 }
 
 logClient.get(conf).pipe(output);
