@@ -73,7 +73,7 @@ const deleteDir = (arg) => {
   let dir = MyUtils.getLogFileDir(arg.date, arg.outputDir);
 
   if (!dir || !fs.existsSync(dir)) {
-    Logger.error(" Directory Not Found: " + dir);
+    Logger.error("ARCHIVE.JS Directory Not Found: " + dir);
   }
   MyUtils.rmdir(dir);
   Logger.info('DELETED ' + dir);
@@ -82,7 +82,10 @@ const deleteDir = (arg) => {
 if (conf.hour) {
   ArchiveManager.createHourlyArchive(conf)
     .then((msg) => Logger.info(msg))
-    .catch((err) => Logger.error(err));
+    .catch((err) => {
+      Logger.error('ARCHIVE.JS HOURLY ARCHIVE');
+      Logger.error(err)
+    });
 } else {
   ArchiveManager.createDailyArchive(conf)
     .then((results) => {
@@ -94,6 +97,9 @@ if (conf.hour) {
         deleteDir(conf);
       }
     })
-    .catch((err) => Logger.error(err));
+    .catch((err) => {
+      Logger.error('ARCHIVE.JS DAILY ARCHIVE');
+      Logger.error(err)
+    });
 }
 
