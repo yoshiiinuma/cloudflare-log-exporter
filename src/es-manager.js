@@ -17,6 +17,7 @@ const usage = () => {
   console.log("     create-mapping <INDEX>:          Uploads mapping definition for the index");
   console.log("     create-template <INDEX>:         Creates a template for the index");
   console.log("     show-mapping <INDEX>:            Shows mapping definition for the index");
+  console.log("     show-template <INDEX>:           Shows template definition for the index");
   console.log("     rollover-index <INDEX>:          Rolls an index alias over to a new index");
   console.log();
   console.log("   OPTIONS");
