@@ -40,6 +40,10 @@ const setupWriteStream = (fpath, resolve, reject) => {
 ArchiveManager.getHourlyLogFiles = (arg) => {
   let dir = MyUtils.getLogFileDir(arg.date, arg.outputDir);
   let pattern = MyUtils.getLogFilePattern(arg.date, arg.hour);
+  if (!fs.existsSync(dir)) {
+    Logger.error('ArchiveManager#getHourlyLogFiles Directory Not Exist: ' + dir);
+    return [];
+  }
   let files = fs.readdirSync(dir).filter((f) => {
     return pattern.test(f);
   });
