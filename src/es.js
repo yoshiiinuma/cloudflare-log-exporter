@@ -5,8 +5,8 @@ import Logger from './logger.js';
 import EsClient from './es-client.js';
 
 const usage = () => {
-  console.log("\n Usage: npm run es-manager <COMMAND> -- [OPTIONS]");
-  console.log(" Usage: node dist/es-manager.js <COMMAND> [OPTIONS]");
+  console.log("\n Usage: npm run es <COMMAND> -- [OPTIONS]");
+  console.log(" Usage: node dist/es.js <COMMAND> [OPTIONS]");
   console.log();
   console.log("   COMMAND:");
   console.log("     health:                          Shows health status");
