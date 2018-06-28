@@ -16,9 +16,15 @@ const DEFAULT_INDEX = 'cflogs';
  */
 PushManager.read = (arg) => {
   let instream = fs.createReadStream(arg.file)
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('PushManager#read instream');
+      Logger.error(err)
+    });
   let linestream = new LineStream()
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('PushManager#read linestream');
+      Logger.error(err)
+    });
   let converter = new BulkInsertConverter(arg.index);
 
   instream.pipe(linestream).pipe(converter).pipe(process.stdout);
@@ -44,9 +50,15 @@ PushManager.push = (arg) => {
     }
   }
   let instream = fs.createReadStream(arg.file)
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('PushManager#push instream');
+      Logger.error(err)
+    });
   let linestream = new LineStream()
-    .on('error', (err) => { Logger.error(err) });
+    .on('error', (err) => {
+      Logger.error('PushManager#push linestream');
+      Logger.error(err)
+    });
   let converter = new BulkInsertConverter(arg.index);
 
   instream.pipe(linestream).pipe(converter).pipe(request.post({ url, json: true })
@@ -58,7 +70,7 @@ PushManager.push = (arg) => {
       }
     })
     .on('error', (err) => {
-        Logger.error('PushManager#push: ' + arg.file);
+      Logger.error('PushManager#push: ' + arg.file);
       Logger.error(err)
     })
   );
