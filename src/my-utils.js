@@ -44,7 +44,15 @@ MyUtils.jsonToObject = (file) => {
 const setUncaughtExceptionHandler = () => {
   process.on('uncaughtException', (err) => {
     Logger.fatal('########################################################################');
+    Logger.fatal('Uncaught Exception');
     Logger.fatal(err);
+    Logger.fatal('########################################################################');
+  });
+  process.on('unhandledRejection', (reason, p) => {
+    Logger.fatal('########################################################################');
+    Logger.fatal('Unhandled Rejection');
+    Logger.fatal(reason);
+    Logger.fatal(p);
     Logger.fatal('########################################################################');
   });
 }
