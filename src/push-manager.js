@@ -74,7 +74,6 @@ PushManager.push = (arg) => {
       Logger.error(err)
     })
   );
-  //instream.pipe(linestream).pipe(BulkInsertConverter).pipe(process.stdout);
 }
 
 export default PushManager;
