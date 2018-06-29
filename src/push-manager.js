@@ -4,6 +4,7 @@ import request from 'request';
 import { LineStream } from 'byline';
 
 import BulkInsertConverter from './bulk-insert-converter.js';
+import BulkInserter from './bulk-inserter.js';
 import Logger from './logger.js';
 
 let PushManager = {}
@@ -60,20 +61,9 @@ PushManager.push = (arg) => {
       Logger.error(err)
     });
   let converter = new BulkInsertConverter(arg.index);
+  let inserter = new BulkInserter(url, arg.file);
 
-  instream.pipe(linestream).pipe(converter).pipe(request.post({ url, json: true })
-    .on('response', (res) => {
-      if (res.statusCode === 200) {
-        Logger.info('PushManager#push: ' + arg.file + ' ' + res.statusCode + ' ' + res.statusMessage);
-      } else {
-        Logger.error('PushManager#push: ' + arg.file + ' ' + res.statusCode + ' ' + res.statusMessage);
-      }
-    })
-    .on('error', (err) => {
-      Logger.error('PushManager#push: ' + arg.file);
-      Logger.error(err)
-    })
-  );
+  instream.pipe(linestream).pipe(converter).pipe(inserter);
 }
 
 export default PushManager;
