@@ -21,7 +21,6 @@ class BulkInserter extends Writable {
     this.count++;
     this.buff += chunk;
     if (this.count % MAXCNT === 0) {
-      console.log('---< ' + this.count + ' >-------------------------------------------');
       this.seq++;
       this._insert(this.buff, this.seq, this.count);
       this.buff = '';
@@ -31,7 +30,6 @@ class BulkInserter extends Writable {
 
   _final(callback) {
     if (this.buff.length > 0) {
-      console.log('+++< ' + this.count + ' >+++++++++++++++++++++++++++++++++++++++++++');
       this.seq++;
       this._insert(this.buff, this.seq, this.count);
       this.buff = '';
