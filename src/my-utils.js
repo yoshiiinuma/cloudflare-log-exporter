@@ -264,7 +264,8 @@ MyUtils.getArchiveDir = (date, archiveDir = DEFAULT_ARCHIVE_DIR) => {
  * arg: { date, hour, archiveDir }
  */
 MyUtils.getArchiveFileName = (arg) => {
-  let date = MyUtils.addTime(arg.date, arg.hour * 3600 * 1000);
+  //let date = MyUtils.addTime(arg.date, arg.hour * 3600 * 1000);
+  let date = MyUtils.adjustTimediff(arg.date, arg.hour);
   let dir = MyUtils.getArchiveDir(date, arg.archiveDir);
   MyUtils.mkdir(dir);
   return dir + '/' + MyUtils.flattenDateHour(date) + '.json.gz';
