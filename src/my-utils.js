@@ -8,6 +8,8 @@ let MyUtils = {};
 export const DEFAULT_OUTPUT_DIR = './output';
 export const DEFAULT_ARCHIVE_DIR = './archive';
 
+const timediff = new Date().getTimezoneOffset() / 60;
+
 /**
  * arg: { env }
  */
@@ -108,8 +110,6 @@ MyUtils.parseSampleRate = (str) => {
 }
 
 const regexDate = /^\d{4}-\d{2}-\d{2}$/;
-
-const timediff = new Date().getTimezoneOffset() / 60;
 
 /**
  * Expects HST and ouputs UTC
@@ -216,8 +216,14 @@ MyUtils.flattenDateHour = (time) => {
   return MyUtils.flattenTime(time).slice(0, 10);
 }
 
+MyUtils.adjustTimediff = (date, hour) => {
+  return date.getTime() + (hour - timediff) * 3600 * 1000;
+}
+
 MyUtils.getLogFilePattern = (date, hour, prefix = 'log.') => {
-  let datehour = MyUtils.flattenDateHour(date.getTime() + hour * 3600 * 1000);
+  let datehour = MyUtils.flattenDateHour(MyUtils.adjustTimediff(date, hour));
+  console.log('DATE: ' + date.toISOString() + '; HOUR: ' + hour);
+  console.log(' -->  ' + datehour);
   return new RegExp(prefix + datehour); 
 }
 
