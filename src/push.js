@@ -12,6 +12,7 @@ const usage = () => {
   console.log("     -e or --env:        development|production default development");
   console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default " + WAIT_MINS + " minutes before now");
   console.log("     -i or --index:      index to push log data");
+  console.log("     -d or --dry:        push to stdout");
   console.log("     -h or --help:       show this message");
   console.log();
 };
@@ -30,6 +31,8 @@ var exitProgram = (msg) => {
   process.exit();
 }
 
+let dryrun = false;
+
 while(args.length > 0) {
   let arg = args.shift();
   if (arg === '-h' || arg === '--help') {
@@ -41,6 +44,8 @@ while(args.length > 0) {
     opt.startTime = MyUtils.parseTime(opt.originalStartTime);
   } else if (arg === '-i' || arg === '--index') {
     opt.index = args.shift();
+  } else if (arg === '-d' || arg === '--dry') {
+    dryrun = true;
   } else {
     exitProgram('Invalid Argument: ' + arg);
   }
@@ -61,5 +66,9 @@ if (!conf) {
 
 conf.file = MyUtils.getLogFileName(conf);
 
-PushManager.push(conf);
+if (dryrun) {
+  PushManager.read(conf);
+} else {
+  PushManager.push(conf);
+}
 
