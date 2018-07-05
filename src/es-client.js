@@ -18,74 +18,73 @@ const endpoint = (arg) => {
   return arg.esApiEndpoint || DEFAULT_ENDPOINT;
 };
 
-let postProcess = (r) => {
+const postProcess = (r) => {
   Logger.debug('EsClient#postProcess')
   Logger.debug(util.inspect(r, false, null));
   return r;
 };
 
-const esGet = (url, data) => {
+const getErrorHandler = (method, url) => {
+  return (err) => {
+    Logger.error('EsClient#' + method + ' ' + url);
+    Logger.error(err);
+    return r;
+  }
+};
+
+const esGet = (name, url, data, cbOk = null, cbErr = null) => {
+  if (!cbOk) cbOk = postProcess
+  if (!cbErr) cbErr = getErrorHandler(name, url);
   return request({ url, json: true, })
-    .then(postProcess)
-    .catch((err) => {
-      Logger.error('EsClient#esGet ' + url);
-      Logger.error(err);
-    });
+    .then(cbOk)
+    .catch(cbErr);
 }
 
-const esPost = (url, data) => {
+const esPost = (name, url, data, cbOk = null, cbErr = null) => {
+  if (!cbOk) cbOk = postProcess
+  if (!cbErr) cbErr = getErrorHandler(name, url);
   let method = 'POST';
   return request({ url, method, json: true, body: data })
-    .then(postProcess)
-    .catch((err) => {
-      Logger.error('EsClient#esPost ' + url);
-      Logger.error(err);
-    });
+    .then(cbOk)
+    .catch(cbErr);
 }
 
-const esPut = (url, data) => {
+const esPut = (name, url, data, cbOk = null, cbErr = null) => {
+  if (!cbOk) cbOk = postProcess
+  if (!cbErr) cbErr = getErrorHandler(name, url);
   let method = 'PUT';
   return request({ url, method, json: true, body: data })
-    .then(postProcess)
-    .catch((err) => {
-      Logger.error('EsClient#esPut ' + url);
-      Logger.error(err);
-    });
+    .then(cbOk)
+    .catch(cbErr);
 }
 
-const esDel = (url) => {
+const esDel = (name, url, cbOk = null, cbErr = null) => {
+  if (!cbOk) cbOk = postProcess
+  if (!cbErr) cbErr = getErrorHandler(name, url);
   let method = 'DELETE';
   return request({ url, method, json: true })
-    .then(postProcess)
-    .catch((err) => {
-      Logger.error('EsClient#esDel ' + url);
-      Logger.error(err);
-    });
+    .then(cbOk)
+    .catch(cbErr);
 }
 
 EsClient.getHealth = (arg) => {
   let url = endpoint(arg) + '_cat/health' + v;
-  return esGet(url);
+  return esGet('getHealth', url);
 };
 
 EsClient.getNodes = (arg) => {
   let url = endpoint(arg) + '_cat/nodes' + v;
-  return esGet(url);
-};
-
-EsClient.getTemplate = (arg) => {
-  let url = endpoint(arg) + '_template' + pretty;
-  return esGet(url);
+  return esGet('getNodes', url);
 };
 
 EsClient.getIndices = (arg) => {
   let url = endpoint(arg) + '_cat/indices' + v;
-  return esGet(url);
+  return esGet('getIndices', url);
 };
 
 EsClient.getIndex = (arg) => {
   let url = endpoint(arg) + arg.index + pretty;
-  return esGet(url);
+  return esGet('getIndex', url);
 };
 
 const getSrcData = (fpath) => {
@@ -106,17 +105,17 @@ EsClient.putIndex = (arg) => {
     Logger.error('EsClient#getSrcData Failed');
     return Promise.resolve();
   }
-  return esPut(url, data);
+  return esPut('putIndex', url, data);
 }
 
 EsClient.deleteIndex = (arg) => {
   let url = endpoint(arg) + arg.index + pretty;
-  return esDel(url);
+  return esDel('deleteIndex', url);
 }
 
 EsClient.getMapping = (arg) => {
   let url = endpoint(arg) + arg.index + '/_mapping/' + tempType + pretty;
-  return esGet(url);
+  return esGet('getMapping', url);
 }
 
 EsClient.putMapping = (arg) => {
@@ -126,27 +125,27 @@ EsClient.putMapping = (arg) => {
     Logger.error('EsClient#getSrcData Failed');
     return Promise.resolve();
   }
-  return esPut(url, data);
+  return esPut('putMapping', url, data);
 }
 
 EsClient.putLog = (arg) => {
   let url = endpoint(arg) + arg.index + '/' + tempType + pretty;
-  return esPut(url);
+  return esPut('putLog', url);
 }
 
 EsClient.deleteLog = (arg) => {
   let url = endpoint(arg) + arg.index + '/' + tempType + pretty;
-  return esDel(url);
+  return esDel('deleteLog', url);
 }
 
 EsClient.bulkInsert = (arg) => {
   let url = endpoint(arg) + '_bulk' + pretty;
-  return esPost(url);
+  return esPost('bulkInsert', url);
 };
 
 EsClient.getTemplate = (arg) => {
   let url = endpoint(arg) + '_template/' + arg.index + pretty;
-  return esGet(url);
+  return esGet('getTemplate', url);
 };
 
 EsClient.putTemplate = (arg) => {
@@ -156,7 +155,7 @@ EsClient.putTemplate = (arg) => {
     Logger.error('EsClient#getSrcData Failed');
     return Promise.resolve();
   }
-  return esPost(url, data);
+  return esPost('putTemplate', url, data);
 };
 
 EsClient.rollover = (arg) => {
@@ -173,7 +172,10 @@ EsClient.rollover = (arg) => {
   if (arg.maxSize) {
     cond.conditions.max_size = arg.maxSize;
   }
-  return esPost(url, cond);
+  return esPost('rollover', url, cond, (r) => {
+    Logger.INFO('EsClient#rollover')
+    Logger.INFO(util.inspect(r, false, null));
+  });
 };
 
 export default EsClient;
