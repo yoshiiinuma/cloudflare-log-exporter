@@ -6,6 +6,7 @@ import Logger from './logger.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
 const WAIT_MINS = 15;
+const MAX_RETRY = 3;
 
 var usage = () => {
   console.log("\n Usage: npm run pull -- [OPTIONS]");
@@ -15,6 +16,7 @@ var usage = () => {
   console.log("     -s or --starttime:  local time YYYY-MM-DDThh:mm:ss default " + WAIT_MINS + " minutes before now");
   console.log("     -r or --duration:   [1-60]{s|sec|secs|m|min|mins} default 1m");
   console.log("     -c or --count:      max number of log data to retrieve");
+  console.log("     ---delay:           delays the request for specified minitues");
   console.log("     -o or --output:     option <FILENAME>; output goes to a specified file or default file instead stdout");
   console.log("     --sample:           sampling rate eg. 0.01 default 0.01");
   console.log("     -h or --help:       show this message");
@@ -25,7 +27,8 @@ var opt = {
   env: 'development',
   startTime: MyUtils.getTimeXminAgo(WAIT_MINS),
   duration: 60000,
-  toFile: false
+  toFile: false,
+  retry: 0
 };
 
 var args = process.argv.slice(2);
@@ -51,6 +54,12 @@ while(args.length > 0) {
     opt.duration = MyUtils.convDuration(dur);
   } else if (arg === '-c' || arg === '--count') {
     opt.count = args.shift();
+  } else if (arg === '--retry') {
+    opt.origRetry = args.shift();
+    opt.retry = parseInt(opt.origRetry);
+  } else if (arg === '--delay') {
+    opt.origDelay = args.shift();
+    opt.delay = parseInt(opt.origDelay);
   } else if (arg === '-o' || arg === '--output') {
     opt.toFile = true;
     if (args[0] && !args[0].startsWith('-')) {
@@ -101,6 +110,18 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
+if (!conf.retry && conf.retry !== 0) {
+  Logger.error('PULL.JS Invalid Retry Number' + conf.origRetry);
+  process.exit();
+}
+
+if (conf.retry >= MAX_RETRY) {
+  let stime = MyUtils.getLocalTimeString(opt.startTime);
+  let dur = opt.duration;
+  Logger.error('PULL.JS Reach TOO MAX RETRY (' + conf.retry) + '): STIME=' + stime + '; DUR=' + dur;
+  process.exit();
+}
+
 let output = process.stdout;
 
 if (conf.toFile) {
@@ -115,5 +136,9 @@ if (conf.toFile) {
   });
 }
 
-logClient.get(conf).pipe(output);
+if (conf.delay) {
+  logClient.getWithDelay(conf).pipe(output);
+} else {
+  logClient.get(conf).pipe(output);
+}
 

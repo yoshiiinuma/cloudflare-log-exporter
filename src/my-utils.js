@@ -177,10 +177,10 @@ MyUtils.toLocalDate = (time) => {
 }
 
 MyUtils.toLocalDateTime = (time) => {
-  return dateFormat(time, 'yyyy-mm-dd HH:MM');
+  return dateFormat(time, "yyyy-mm-dd'T'HH:MM:ss");
 }
 
-MyUtils.toLocalTime = (arg) => {
+MyUtils.getStartTime = (arg) => {
   if (arg.hour || arg.hour == 0) {
     return MyUtils.toLocalDate(arg.date) + 'T' + arg.hour.toString().padStart(2, '0') + ':00';
   } else {
@@ -188,15 +188,18 @@ MyUtils.toLocalTime = (arg) => {
   }
 }
 
-MyUtils.toLocalDateString = (time) => {
-  if (typeof time === 'number') time = new Date(time);
-  return time.toLocalDateString();
-}
-
-MyUtils.toLocalTimeString = (time) => {
-  if (typeof time === 'number') time = new Date(time);
-  return time.toLocalDateString() + 'T' + time.toLocalTimeString().replace(/:\d{2}$/, '');
-}
+//MyUtils.toLocalDateString = (time) => {
+//  if (typeof time === 'number') time = new Date(time);
+//  let y, m, d;
+//  [y, m, d] = time.toLocaleDateString().split('-');
+//  return y + '-' + m.padStart(2, '0') + '-' + d.padStart(2, '0');
+//}
+//
+//MyUtils.toLocalTimeString = (time) => {
+//  if (typeof time === 'number') time = new Date(time);
+//  //return MyUtils.toLocalDateString(time) + 'T' + time.toLocaleTimeString().replace(/:\d{2}$/, '');
+//  return MyUtils.toLocalDateString(time) + 'T' + time.toLocaleTimeString();
+//}
 
 MyUtils.toISOStringWithoutMS = (time) => {
   if (typeof time === 'number') time = new Date(time);

@@ -78,7 +78,7 @@ const getConcatHourlyLogStreams = (arg, resolve, reject) => {
 ArchiveManager.createHourlyArchive = (arg) => {
   return new Promise((resolve, reject) => {
     let gzfile = MyUtils.getArchiveFileName(arg);
-    let r = MyUtils.toLocalTime(arg) + ' => ';
+    let r = MyUtils.getStartTime(arg) + ' => ';
     let success = () => { resolve(r + gzfile) }
     let gzip = setupGzip(resolve, reject);
     let outStream = setupWriteStream(gzfile, success, reject);
