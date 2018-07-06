@@ -8,7 +8,7 @@ const DEFAULT_SAMPLE_RATE = 0.01;
 const WAIT_MINS = 15;
 const MAX_RETRY = 3;
 
-var usage = () => {
+const usage = () => {
   console.log("\n Usage: npm run pull -- [OPTIONS]");
   console.log(" Usage: node dist/pull.js [OPTIONS]");
   console.log("\n   OPTIONS");
@@ -23,7 +23,9 @@ var usage = () => {
   console.log();
 }
 
-var opt = {
+let test = false;
+
+let opt = {
   env: 'development',
   startTime: MyUtils.getTimeXminAgo(WAIT_MINS),
   duration: 60000,
@@ -31,9 +33,9 @@ var opt = {
   retry: 0
 };
 
-var args = process.argv.slice(2);
+let args = process.argv.slice(2);
 
-var exitProgram = (msg) => {
+let exitProgram = (msg) => {
   if (msg) console.log('PULL.JS ' + msg);
   usage();
   process.exit();
@@ -43,6 +45,8 @@ while(args.length > 0) {
   let arg = args.shift();
   if (arg === '-h' || arg === '--help') {
     exitProgram();
+  } else if (arg === '--test') {
+    test = true;
   } else if (arg === '-e' || arg === '--env') {
     opt.env = args.shift();
   } else if (arg === '-s' || arg === '--starttime') {
@@ -59,7 +63,8 @@ while(args.length > 0) {
     opt.retry = parseInt(opt.origRetry);
   } else if (arg === '--delay') {
     opt.origDelay = args.shift();
-    opt.delay = parseInt(opt.origDelay);
+    opt.delayInMin = parseInt(opt.origDelay);
+    if (!isNaN(opt.delayInMin)) opt.delay = true;
   } else if (arg === '-o' || arg === '--output') {
     opt.toFile = true;
     if (args[0] && !args[0].startsWith('-')) {
@@ -90,7 +95,7 @@ if (!opt.duration) {
   exitProgram(" Invalid Duration: " + opt.originalDuration);
 }
 
-let regexInt = /^\d+$/;
+const regexInt = /^\d+$/;
 
 if (opt.count) {
   if (!regexInt.test(opt.count)) {
@@ -110,7 +115,7 @@ if (!conf) {
   exitProgram('Configuration File Not Found: ' + MyUtils.config(opt));
 }
 
-if (!conf.retry && conf.retry !== 0) {
+if (isNaN(conf.retry)) {
   Logger.error('PULL.JS Invalid Retry Number' + conf.origRetry);
   process.exit();
 }
@@ -136,9 +141,19 @@ if (conf.toFile) {
   });
 }
 
+Logger.debug('#################################');
+if (test) {
+  logClient.delayedPull(conf, 10);
+} else {
+
 if (conf.delay) {
-  logClient.getWithDelay(conf).pipe(output);
+  setTimeout(() => {
+    logClient.get(conf).pipe(output)
+  }, conf.delayInMin * 1000);
 } else {
   logClient.get(conf).pipe(output);
 }
+
+}
+
 
