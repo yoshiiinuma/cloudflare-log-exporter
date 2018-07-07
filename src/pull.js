@@ -141,7 +141,6 @@ if (conf.toFile) {
   });
 }
 
-Logger.debug('#################################');
 if (test) {
   LogClient.delayedPull(conf, 10);
 } else {
@@ -155,5 +154,4 @@ if (conf.delay) {
 }
 
 }
-
 
