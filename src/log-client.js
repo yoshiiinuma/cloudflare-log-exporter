@@ -73,10 +73,12 @@ const pull = (arg) => {
     Logger.error('LogClient#pull ' + url);
     Logger.error(err);
     if (err.code === 'NOTFOUND') {
+      Logger.error('LogClient#pull NOTFOUND');
     } else if (err.code === 'ENETUNREACH') {
       Logger.error('LogClient#pull ENETUNREACH');
       startDelayedPull(arg, RETRY_INTERVAL);
     } else if (err.code === 'ETIMEDOUT') {
+      Logger.error('LogClient#pull ETIMEDOUT');
       startDelayedPull(arg, RETRY_INTERVAL);
     } else {
       Logger.error('#### LOG CLIENT ########################################################');

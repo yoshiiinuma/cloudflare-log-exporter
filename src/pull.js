@@ -148,7 +148,7 @@ if (test) {
 if (conf.delay) {
   setTimeout(() => {
     LogClient.pull(conf).pipe(output)
-  }, conf.delayInMin * 1000);
+  }, conf.delayInMin * 60 * 1000);
 } else {
   LogClient.pull(conf).pipe(output);
 }
