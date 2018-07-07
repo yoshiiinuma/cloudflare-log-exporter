@@ -5,6 +5,8 @@ import { spawn } from 'child_process';
 import MyUtils from './my-utils.js';
 import Logger from './logger.js';
 
+let LogClient = {};
+
 const urlPrefix = 'https://api.cloudflare.com/client/v4';
 const RETRY_INTERVAL = 10; // 10 Minutes
 
@@ -42,7 +44,7 @@ const generateLogApiUrl = (arg) => {
 
 const createDelayedPullParams = (arg, delayInMin) => {
   let stime = MyUtils.toLocalDateTime(arg.startTime);
-  let dur = arg.duration;
+  let dur = MyUtils.restoreDuration(arg.duration);
   let env = arg.env;
   let retry = arg.retry + 1;
   return ['dist/pull.js', '-o', '-s', stime, '-r', dur, '-e', env, '--retry', retry, '--delay', delayInMin];
@@ -68,10 +70,11 @@ const startDelayedPull = (arg, delayInMin) => {
 const pull = (arg) => {
   let url = generateLogApiUrl(arg);
   let errHandler = (err) => {
-    Logger.error('LogClient#get ' + url);
+    Logger.error('LogClient#pull ' + url);
     Logger.error(err);
     if (err.code === 'NOTFOUND') {
     } else if (err.code === 'ENETUNREACH') {
+      Logger.error('LogClient#pull ENETUNREACH');
       startDelayedPull(arg, RETRY_INTERVAL);
     } else if (err.code === 'ETIMEDOUT') {
       startDelayedPull(arg, RETRY_INTERVAL);
@@ -95,30 +98,7 @@ const pull = (arg) => {
   }).on('error', errHandler);
 };
 
-
-let logClient = {};
-
-logClient.get = pull;
-logClient.delayedPull = startDelayedPull;
-
-//logClient.get = (arg) => {
-// let url = generateLogApiUrl(arg);
-//
-// return request({
-//   uri: url,
-//   json: true,
-//   gzip: true,
-//   headers: {
-//     'X-Auth-Key': arg.authKey,
-//     'X-Auth-Email': arg.authEmail
-//   }
-// }).on('error', (err) => {
-//   Logger.error('LogClient#get ' + url);
-//   Logger.error(err);
-// });
-//};
-
-logClient.fields = (arg) => {
+const getFields = (arg) => {
   let url = urlPrefix + '/zones/' + arg.zoneId + '/logs/received/fields';
 
   return request({
@@ -135,5 +115,9 @@ logClient.fields = (arg) => {
   });
 }
 
-export default logClient;
+LogClient.delayedPull = startDelayedPull;
+LogClient.pull = pull;
+LogClient.getFields = getFields;
+
+export default LogClient;
 

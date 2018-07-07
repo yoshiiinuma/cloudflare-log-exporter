@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import MyUtils from './my-utils.js';
-import logClient from './log-client.js';
+import LogClient from './log-client.js';
 import Logger from './logger.js';
 
 const DEFAULT_SAMPLE_RATE = 0.01;
@@ -143,15 +143,15 @@ if (conf.toFile) {
 
 Logger.debug('#################################');
 if (test) {
-  logClient.delayedPull(conf, 10);
+  LogClient.delayedPull(conf, 10);
 } else {
 
 if (conf.delay) {
   setTimeout(() => {
-    logClient.get(conf).pipe(output)
+    LogClient.pull(conf).pipe(output)
   }, conf.delayInMin * 1000);
 } else {
-  logClient.get(conf).pipe(output);
+  LogClient.pull(conf).pipe(output);
 }
 
 }

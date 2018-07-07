@@ -102,6 +102,27 @@ MyUtils.convDuration = (str) => {
   }
 }
 
+/**
+ * Convert millisecond to duration in string which pull.js accepts as an argument
+ *
+ *        1000 ->  1s
+ *       59000 -> 59s
+ *       60000 ->  1m
+ *      600000 -> 10m
+ *     3600000 -> 60m
+ *
+ */
+MyUtils.restoreDuration = (dur) => {
+  if (!Number.isInteger(dur)) return null;
+  if (dur >= 1000 && dur < 60000) {
+    return (dur / 1000) + 's';
+  } else if (dur >= 60000 && dur < 3600000) {
+    return (dur / 60000) + 'm';
+  }
+
+  return null;
+}
+
 const regexSampleRate = /^(1|0\.\d+)$/;
 
 MyUtils.parseSampleRate = (str) => {
