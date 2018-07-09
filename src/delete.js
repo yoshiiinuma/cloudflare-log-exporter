@@ -90,12 +90,11 @@ if (target === ARCHIVE) {
 }
 
 if (!dir || !fs.existsSync(dir)) {
+  Logger.error('DELETE.JS NOT FOUND: ' + dir);
   exitProgram(" Directory Not Found: " + dir);
 }
 
 if (MyUtils.rmdir(dir)) {
   Logger.info('DELETE.JS DELETED ' + dir);
-} else {
-  Logger.error('DELETE.JS NOT FOUND: ' + dir);
 }
 
