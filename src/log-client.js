@@ -72,8 +72,8 @@ const pull = (arg) => {
   let errHandler = (err) => {
     Logger.error('LogClient#pull ' + url);
     Logger.error(err);
-    if (err.code === 'NOTFOUND') {
-      Logger.error('LogClient#pull NOTFOUND');
+    if (err.code === 'ENOTFOUND') {
+      Logger.error('LogClient#pull ENOTFOUND');
     } else if (err.code === 'ENETUNREACH') {
       Logger.error('LogClient#pull ENETUNREACH');
       startDelayedPull(arg, RETRY_INTERVAL);
