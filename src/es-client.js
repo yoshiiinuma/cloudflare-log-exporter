@@ -173,8 +173,8 @@ EsClient.rollover = (arg) => {
     cond.conditions.max_size = arg.maxSize;
   }
   return esPost('rollover', url, cond, (r) => {
-    Logger.INFO('EsClient#rollover')
-    Logger.INFO(util.inspect(r, false, null));
+    Logger.info('EsClient#rollover')
+    Logger.info(util.inspect(r, false, null));
   });
 };
 
