@@ -86,7 +86,10 @@ MyUtils.rmdir = (dir) => {
       }
     });
     fs.rmdirSync(dir);
+  } else {
+    return false;
   }
+  return true;
 }
 
 const regexDur = /^([1-9]|[1-5]\d|60|)(s|sec|secs|m|min|mins)$/i;
