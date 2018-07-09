@@ -28,7 +28,7 @@ const getErrorHandler = (method, url) => {
   return (err) => {
     Logger.error('EsClient#' + method + ' ' + url);
     Logger.error(err);
-    return r;
+    return;
   }
 };
 
