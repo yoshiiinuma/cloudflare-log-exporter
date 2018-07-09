@@ -78,33 +78,33 @@ if (!conf) {
 }
 
 if (command === 'health') {
-  EsClient.getHealth(conf);
+  EsClient.getHealth(conf).then((r) => console.log(r));
 } else if (command === 'show-indices') {
-  EsClient.getIndices(conf);
+  EsClient.getIndices(conf).then((r) => console.log(r));
 } else if (command === 'show-index') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.getIndex(conf);
+  EsClient.getIndex(conf).then((r) => console.log(r));
 } else if (command === 'create-index') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.putIndex(conf);
+  EsClient.putIndex(conf).then((r) => console.log(r));
 } else if (command === 'delete-index') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.deleteIndex(conf);
+  EsClient.deleteIndex(conf).then((r) => console.log(r));
 } else if (command === 'create-mapping') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.putMapping(conf);
+  EsClient.putMapping(conf).then((r) => console.log(r));
 } else if (command === 'show-mapping') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.getMapping(conf);
+  EsClient.getMapping(conf).then((r) => console.log(r));
 } else if (command === 'create-template') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.putTemplate(conf);
+  EsClient.putTemplate(conf).then((r) => console.log(r));
 } else if (command === 'show-template') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.getTemplate(conf);
+  EsClient.getTemplate(conf).then((r) => console.log(r));
 } else if (command === 'rollover-index') {
   if (!conf.index) exitProgram('No Index Provided');
-  EsClient.rollover(conf);
+  EsClient.rollover(conf).then((r) => console.log(r));
 } else {
   exitProgram('Invalid Command: ' + command + ' ' + params.join(' '));
 }
