@@ -80,6 +80,9 @@ const pull = (arg) => {
     } else if (err.code === 'ETIMEDOUT') {
       Logger.error('LogClient#pull ETIMEDOUT');
       startDelayedPull(arg, RETRY_INTERVAL);
+    } else if (err.code === 'ECONNRESET') {
+      Logger.error('LogClient#pull ECONNRESET');
+      startDelayedPull(arg, RETRY_INTERVAL);
     } else {
       Logger.error('#### LOG CLIENT ########################################################');
       Logger.error('ERROR CODE:      ' + err.code);
