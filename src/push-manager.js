@@ -6,6 +6,7 @@ import { LineStream } from 'byline';
 import BulkInsertConverter from './bulk-insert-converter.js';
 import BulkInserter from './bulk-inserter.js';
 import Logger from './logger.js';
+import LogClient from './log-client.js';
 
 let PushManager = {}
 
@@ -14,6 +15,8 @@ const DEFAULT_INDEX = 'cflogs';
 
 const RGX_HTML = /<html>/;
 const RGX_TOOMANYREQS = /Too Many Requests/;
+
+const RETRY_INTERVAL = 10; // 10 Minutes
 
 /**
  * arg: { date, hour, archiveDir }
@@ -94,6 +97,13 @@ PushManager.push = (arg) => {
     });
   let converter = new BulkInsertConverter(index);
   let inserter = new BulkInserter(url, file);
+
+  converter.on('error', (err) => {
+    Logger.error('PushManager#push INVALID JSON');
+    Logger.error(err);
+    let newArg = Object.assign(Object.assign({}, arg), { retry: 1 });
+    LogClient.delayedPull(newArg, RETRY_INTERVAL);
+  });
 
   instream.pipe(linestream).pipe(converter).pipe(inserter);
 }
