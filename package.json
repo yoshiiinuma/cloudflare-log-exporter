@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pull": "babel-node src/pull.js",
     "es": "babel-node src/es.js",
+    "old": "babel-node src/es.js delete-oldest-index",
     "archive": "babel-node src/archive.js",
     "view": "babel-node src/view.js",
     "delete": "babel-node src/delete.js",

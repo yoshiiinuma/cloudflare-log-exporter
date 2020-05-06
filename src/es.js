@@ -14,10 +14,14 @@ const usage = () => {
   console.log("     show-index <INDEX>:              Shows the index");
   console.log("     create-index <INDEX>:            Creates the index");
   console.log("     delete-index <INDEX>:            Deletes the index");
-  console.log("     create-mapping <INDEX>:          Uploads mapping definition for the index");
-  console.log("     create-template <INDEX>:         Creates a template for the index");
-  console.log("     show-mapping <INDEX>:            Shows mapping definition for the index");
+  console.log("     delete-oldest-index:             Deletes the oldest index");
+  console.log("     show-templates:                  Shows template definitions");
   console.log("     show-template <INDEX>:           Shows template definition for the index");
+  console.log("     create-template <INDEX>:         Creates a template for the index");
+  console.log("     delete-template <INDEX>:         Deletes a template for the index");
+  console.log("     show-mappings:                   Shows mappings definition");
+  console.log("     show-mapping <INDEX>:            Shows mapping definition for the index");
+  console.log("     create-mapping <INDEX>:          Uploads mapping definition for the index");
   console.log("     rollover-index <INDEX>:          Rolls an index alias over to a new index");
   console.log();
   console.log("   OPTIONS");
@@ -54,12 +58,18 @@ while(args.length > 0) {
     opt.env = args.shift();
   } else if (arg === 'health' || arg === 'show-indices') {
     command = arg;
+  } else if (arg === 'delete-oldest-index') {
+    command = arg;
+  } else if (arg === 'show-mappings') {
+    command = arg;
+  } else if (arg === 'show-templates') {
+    command = arg;
   } else if (arg === 'create-index' || arg === 'show-index' || arg === 'delete-index'  ||
       arg === 'rollover-index' || arg === 'show-mapping' || arg === 'show-template') {
     command = arg;
     opt.index = args.shift();
     params.push(opt.index);
-  } else if (arg === 'create-mapping' || arg === 'create-template') {
+  } else if (arg === 'create-mapping' || arg === 'create-template' || arg === 'delete-template') {
     command = arg;
     opt.index = args.shift();
     params.push(opt.index);
@@ -90,18 +100,27 @@ if (command === 'health') {
 } else if (command === 'delete-index') {
   if (!conf.index) exitProgram('No Index Provided');
   EsClient.deleteIndex(conf).then((r) => console.log(r));
-} else if (command === 'create-mapping') {
-  if (!conf.index) exitProgram('No Index Provided');
-  EsClient.putMapping(conf).then((r) => console.log(r));
-} else if (command === 'show-mapping') {
-  if (!conf.index) exitProgram('No Index Provided');
-  EsClient.getMapping(conf).then((r) => console.log(r));
-} else if (command === 'create-template') {
-  if (!conf.index) exitProgram('No Index Provided');
-  EsClient.putTemplate(conf).then((r) => console.log(r));
+} else if (command === 'delete-oldest-index') {
+  EsClient.deleteOldestIndex(conf).then((r) => console.log(r));
+} else if (command === 'show-templates') {
+  EsClient.getTemplates(conf).then((r) => console.log(r));
 } else if (command === 'show-template') {
   if (!conf.index) exitProgram('No Index Provided');
   EsClient.getTemplate(conf).then((r) => console.log(r));
+} else if (command === 'create-template') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.putTemplate(conf).then((r) => console.log(r));
+} else if (command === 'delete-template') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.deleteTemplate(conf).then((r) => console.log(r));
+} else if (command === 'create-mapping') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.putMapping(conf).then((r) => console.log(r));
+} else if (command === 'show-mappings') {
+  EsClient.getMappings(conf).then((r) => console.log(r));
+} else if (command === 'show-mapping') {
+  if (!conf.index) exitProgram('No Index Provided');
+  EsClient.getMapping(conf).then((r) => console.log(r));
 } else if (command === 'rollover-index') {
   if (!conf.index) exitProgram('No Index Provided');
   EsClient.rollover(conf).then((r) => console.log(r));

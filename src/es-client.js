@@ -28,6 +28,7 @@ const getErrorHandler = (method, url) => {
   return (err) => {
     Logger.error('EsClient#' + method + ' ' + url);
     Logger.error(err);
+    //Logger.error(util.inspect(err.error, false, null));
     return;
   }
 };
@@ -90,10 +91,10 @@ EsClient.getIndex = (arg) => {
 const getSrcData = (fpath) => {
   if (!fpath) {
     Logger.error('EsClient#getSrcData File Not Specified: ' + fpath);
-    return null;
+    return null
   } else if (!fs.existsSync(fpath)) {
     Logger.error('EsClient#getSrcData File Not Found: ' + fpath);
-    return null;
+    return null
   }
   return MyUtils.jsonToObject(fpath);
 };
@@ -103,7 +104,7 @@ EsClient.putIndex = (arg) => {
   let data = getSrcData(arg.esIndexSrc);
   if (!data) {
     Logger.error('EsClient#getSrcData Failed');
-    return Promise.resolve();
+    return Promise.resolve('EsClient#getSrcData Failed');
   }
   return esPut('putIndex', url, data);
 }
@@ -113,12 +114,46 @@ EsClient.deleteIndex = (arg) => {
   return esDel('deleteIndex', url);
 }
 
+EsClient.deleteOldestIndex = (arg) => {
+  const max = arg.esIndexMaxNumber || 3;
+  return new Promise((resolve, reject) => {
+    EsClient.getIndices(arg).then((r) => {
+      const indices = r.map(e => e.index).filter(e => e.startsWith('cflogs-')).sort()
+      if (indices.length > max) {
+        const index = indices[0];
+        const url = endpoint(arg) + index + pretty;
+        Logger.info('EsClient#deleteOldestIndex: Deleting index ' + index);
+        return esDel('deleteIndex', url, resolve);
+      } else {
+        Logger.info('EsClient#deleteOldestIndex: Current # of inidices ' + indices.length);
+        return resolve('EsClient#deleteOldestIndex: Current # of inidices ' + indices.length);
+      }
+    });
+  });
+}
+
+EsClient.getMappings = (arg) => {
+  //Since 7.0, '_doc' is removed
+  //let url = endpoint(arg) + '/_mapping' + pretty;
+  let url = endpoint(arg) + '/_mapping/' + tempType + pretty;
+  return esGet('getMappings', url);
+}
+
 EsClient.getMapping = (arg) => {
+  //Since 7.0, '_doc' is removed
+  //let url = endpoint(arg) + arg.index + '/_mapping' + pretty;
   let url = endpoint(arg) + arg.index + '/_mapping/' + tempType + pretty;
   return esGet('getMapping', url);
 }
 
+/*
+ * Mapping Data Format
+ * 6.x: data: { "properties": {} }
+ * 7.x: data: { "mappings": { "properties": {} } }
+ */
 EsClient.putMapping = (arg) => {
+  //Since 7.0, '_doc' is removed
+  //let url = endpoint(arg) + arg.index + '/_mapping';
   let url = endpoint(arg) + arg.index + '/_mapping/' + tempType;
   let data = getSrcData(arg.esIndexMappingSrc);
   if (!data) {
@@ -143,19 +178,34 @@ EsClient.bulkInsert = (arg) => {
   return esPost('bulkInsert', url);
 };
 
+EsClient.getTemplates = (arg) => {
+  let url = endpoint(arg) + '_template/' + pretty;
+  return esGet('getTemplates', url);
+};
+
 EsClient.getTemplate = (arg) => {
   let url = endpoint(arg) + '_template/' + arg.index + pretty;
   return esGet('getTemplate', url);
 };
 
+/*
+ * Template Data Format
+ * 6.x: data: { "mappings": { "_doc": { "properties": {} } }, ... }
+ * 7.x: data: { "mappings": { "properties": {} } }, ... }
+ */
 EsClient.putTemplate = (arg) => {
-  let url = endpoint(arg) + '_template/' + arg.index + pretty;
+  let url = endpoint(arg) + '_template/' + arg.index;
   let data = getSrcData(arg.esIndexTemplateSrc);
   if (!data) {
     Logger.error('EsClient#getSrcData Failed');
     return Promise.resolve();
   }
   return esPost('putTemplate', url, data);
+};
+
+EsClient.delTemplate = (arg) => {
+  let url = endpoint(arg) + '_template/' + arg.index + pretty;
+  return esDel('delTemplate', url);
 };
 
 EsClient.rollover = (arg) => {

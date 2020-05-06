@@ -3,6 +3,7 @@
   "esIndexNameCurrent": "cflogs",
   "esIndexNameAll": "all-cflogs",
   "esIndexMaxAge": "30d",
+  "esIndexMaxNumber": "12",
   "esIndexSrc": "./config/index.json",
   "esIndexTemplateSrc": "./config/template.json",
   "esIndexMappingSrc": "./config/mapping.json",
